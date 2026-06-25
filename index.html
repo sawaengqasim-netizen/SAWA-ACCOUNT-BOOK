@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1a56db">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CK Khata">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231a56db'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='60' font-family='sans-serif' font-weight='bold' fill='white'%3ECK%3C/text%3E%3C/svg%3E">
 <title>ContractorKhata</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -130,7 +135,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   <div class="hdr">
     <div class="hdr-top">
       <div class="hdr-av" id="h-av" onclick="goto('pg-settings')"><span id="h-init">CK</span></div>
-      <div><div class="hdr-biz" id="h-biz">ContractorKhata</div><div class="hdr-dt" id="h-dt"></div><div id="sync-status" style="font-size:10px;opacity:.7;margin-top:2px"></div></div>
+      <div><div class="hdr-biz" id="h-biz">ContractorKhata</div><div class="hdr-dt" id="h-dt"></div></div>
     </div>
     <div class="bal-row">
       <div class="bal-box"><div class="bal-val" id="hb-bank">0</div><div class="bal-lbl">Bank/Cash</div></div>
@@ -176,9 +181,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     <div class="fld"><label>Tafseeli (Detail)</label><input type="text" id="e-desc" placeholder="e.g. Advance payment, Sement..."></div>
     <div class="fld"><label>Tarikh</label><input type="date" id="e-date"></div>
     <div class="fld"><label>Link Account (optional)</label><select id="e-link-sel"><option value="">-- Link Account (optional) --</option></select></div>
-    <div class="attach-row" onclick="document.getElementById('e-file').click()">
-      <span>📎</span><span id="e-file-lbl">Bill / Receipt (optional)</span>
-      <input type="file" id="e-file" accept="image/*,.pdf" onchange="onFileChange()">
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Bill / Receipt (optional)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button type="button" onclick="document.getElementById('e-cam').click()" style="padding:10px;border:1.5px dashed #d1d5db;border-radius:8px;background:#fff;font-size:13px;color:#6b7280;cursor:pointer;font-family:inherit">📷 Camera</button>
+        <button type="button" onclick="document.getElementById('e-gal').click()" style="padding:10px;border:1.5px dashed #d1d5db;border-radius:8px;background:#fff;font-size:13px;color:#6b7280;cursor:pointer;font-family:inherit">🖼️ Gallery / File</button>
+      </div>
+      <div id="e-file-lbl" style="font-size:12px;color:#9ca3af;margin-top:6px">Koi file select nahi</div>
+      <input type="file" id="e-cam" accept="image/*" capture="environment" style="display:none" onchange="onFileChange('cam')">
+      <input type="file" id="e-gal" accept="image/*,.pdf" style="display:none" onchange="onFileChange('gal')">
     </div>
     <button class="sbtn" id="e-save-btn" onclick="saveEntry()">Save</button>
     <button class="sbtn gray" onclick="goBack()">Cancel</button>
@@ -203,17 +214,22 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
     </div>
     <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px">
       <div style="flex-shrink:0;text-align:center">
-        <div class="av-up" id="ap-av" onclick="document.getElementById('ap-ph').click()" style="width:72px;height:72px;margin:0 auto 6px">
+        <div class="av-up" id="ap-av" onclick="document.getElementById('ap-cam').click()" style="width:72px;height:72px;margin:0 auto 6px">
           <span style="font-size:24px">📷</span>
         </div>
-        <div style="font-size:11px;color:#1a56db;font-weight:600">+ Photo Add Karen</div>
+        <div style="display:flex;gap:5px;justify-content:center;margin-top:5px">
+          <button type="button" onclick="document.getElementById('ap-cam').click()" style="font-size:10px;padding:3px 8px;border:1px solid #1a56db;border-radius:6px;background:#eff6ff;color:#1e429f;cursor:pointer;font-family:inherit">📷 Camera</button>
+          <button type="button" onclick="document.getElementById('ap-gal').click()" style="font-size:10px;padding:3px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#6b7280;cursor:pointer;font-family:inherit">🖼️ Gallery</button>
+        </div>
       </div>
       <div style="flex:1">
         <div class="fld" style="margin-bottom:10px"><label>Naam *</label><input type="text" id="ap-name" placeholder="Naam"></div>
         <div class="fld" style="margin:0"><label>Phone / WhatsApp</label><input type="tel" id="ap-phone" placeholder="+92..."></div>
       </div>
     </div>
-    <input type="file" id="ap-ph" accept="image/*" style="display:none" onchange="apPhotoLoad()">
+    <input type="file" id="ap-cam" accept="image/*" capture="environment" style="display:none" onchange="apPhotoLoad('cam')">
+    <input type="file" id="ap-gal" accept="image/*" style="display:none" onchange="apPhotoLoad('gal')">
+    <input type="file" id="ap-ph" accept="image/*" style="display:none" onchange="apPhotoLoad('ph')">
     <div class="fld"><label>Address</label><input type="text" id="ap-addr" placeholder="optional"></div>
     <div class="fld"><label>Note</label><input type="text" id="ap-note" placeholder="optional"></div>
     <div id="ap-lab-flds" style="display:none">
@@ -429,97 +445,20 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const SK='ck_fin2';
 let D={prof:{biz:'',owner:'',phone:'',addr:'',city:'',photo:null},parties:[],txns:[],salary:[],advances:[]};
 
-// ═══════════════════════════════════════════════════════════
-// FIREBASE CONFIG — fill in your own values from Firebase Console
-// Project Settings → General → Your apps → SDK setup and configuration
-// ═══════════════════════════════════════════════════════════
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAMThY8YYViF99OEnzqpsZBQAbq1a63ttg",
-  databaseURL: "https://sawa-account-book-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "sawa-account-book"
-};
-// Shared "room" key — everyone using the same value here shares the same data.
-// Change this to something private/unique if you don't want strangers on the same Firebase project to see your data.
-const SYNC_ROOM = "contractor_khata_main";
-
-let _fbReady=false;
-let _fbRef=null;
-let _suppressNextRemoteSave=false; // avoid re-saving data we just received from Firebase
-
-function initFirebase(retryCount){
-  retryCount = retryCount || 0;
-  if(FIREBASE_CONFIG.apiKey==="YOUR_API_KEY"){
-    // Not configured yet — fall back to localStorage only, no cloud sync
-    console.warn("Firebase not configured — using local-only storage. See FIREBASE_CONFIG in the script.");
-    return;
-  }
-  // The Firebase SDK script tags load from gstatic.com — on slow connections they
-  // may not be ready yet when this function first runs. Retry a few times before giving up.
-  if(typeof firebase==='undefined'){
-    if(retryCount<10){
-      setTimeout(()=>initFirebase(retryCount+1), 400);
-    } else {
-      console.error("Firebase SDK script never loaded (check internet connection / ad-blockers).");
-      const statusEl=document.getElementById('sync-status');
-      if(statusEl) statusEl.textContent='⚠ Sync off (no internet?)';
-    }
-    return;
-  }
-  try{
-    firebase.initializeApp(FIREBASE_CONFIG);
-    _fbRef=firebase.database().ref(SYNC_ROOM);
-    _fbReady=true;
-    // Listen for remote changes (from other devices) and apply them live
-    _fbRef.on('value', (snapshot)=>{
-      const remote=snapshot.val();
-      if(!remote) return; // nothing in cloud yet
-      _suppressNextRemoteSave=true;
-      D={
-        prof: remote.prof || D.prof,
-        parties: Array.isArray(remote.parties) ? remote.parties : [],
-        txns: Array.isArray(remote.txns) ? remote.txns : [],
-        salary: Array.isArray(remote.salary) ? remote.salary : [],
-        advances: Array.isArray(remote.advances) ? remote.advances : []
-      };
-      try{ localStorage.setItem(SK,JSON.stringify(D)); }catch(e){}
-      // Re-render whatever screen is currently open
-      try{ renderList(); }catch(e){}
-      try{ if(document.getElementById('pg-party').classList.contains('on') && _pty){ renderTxns(_pty); renderStrip(_pty); } }catch(e){}
-      try{ if(document.getElementById('pg-salary').classList.contains('on')){ renderSalHist(); } }catch(e){}
-      try{ updateHomeProfile2(); }catch(e){}
-      _suppressNextRemoteSave=false;
-    });
-    const statusEl=document.getElementById('sync-status');
-    if(statusEl) statusEl.innerHTML='<i class="ti ti-cloud-check" style="font-size:10px"></i> Cloud Sync ON';
-  }catch(e){
-    console.error("Firebase init failed:", e);
-    const statusEl=document.getElementById('sync-status');
-    if(statusEl) statusEl.textContent='⚠ Sync off (local only)';
-    alert("Cloud sync connect nahi ho saka. App phir bhi chalegi, lekin data sirf is device mein save hoga.\n\nError: "+e.message);
-  }
-}
-
-function updateHomeProfile2(){ try{ updateHomeProfile(); }catch(e){} }
-
 const sv=()=>{
   try{
     localStorage.setItem(SK,JSON.stringify(D));
+    return true;
   }catch(e){
     alert('⚠️ Storage full! Data save nahi ho saka.\n\nPurani bills/photos delete karen ya JSON Backup lekar purana data clear karen (Reports > Backup).');
     return false;
   }
-  // Push to cloud so other devices see it too (skip if this save was triggered BY a remote update)
-  if(_fbReady && _fbRef && !_suppressNextRemoteSave){
-    _fbRef.set(D).catch(err=>{ console.error("Cloud sync failed:", err); });
-  }
-  return true;
 };
 const ld=()=>{try{const s=localStorage.getItem(SK);if(s){const p=JSON.parse(s);D={...D,...p}}}catch(e){}};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
@@ -704,7 +643,7 @@ function openEntry(type,editId){
       document.getElementById('e-desc').value=t.desc||'';
       document.getElementById('e-date').value=t.date;
       lsel.value=t.accId||'';
-      document.getElementById('e-file-lbl').textContent=t.attach?'Bill attached ✓':'Bill / Receipt (optional)';
+      document.getElementById('e-file-lbl').textContent=t.attach?'📎 Bill attached ✓':'Koi file select nahi';
       document.getElementById('e-edit-id').value=editId;
     }
   } else {
@@ -712,16 +651,18 @@ function openEntry(type,editId){
     document.getElementById('e-desc').value='';
     document.getElementById('e-date').value=td();
     lsel.value='';
-    document.getElementById('e-file-lbl').textContent='Bill / Receipt (optional)';
+    document.getElementById('e-file-lbl').textContent='Koi file select nahi';
     document.getElementById('e-edit-id').value='';
-    document.getElementById('e-file').value='';
+    const ec=document.getElementById('e-cam');if(ec)ec.value='';
+    const eg=document.getElementById('e-gal');if(eg)eg.value='';
   }
   document.getElementById('e-etype').value=type;
   push('pg-entry');
 }
-function onFileChange(){
-  const f=document.getElementById('e-file').files[0];
-  if(f) document.getElementById('e-file-lbl').textContent=f.name+' ✓';
+function onFileChange(src){
+  const id=src==='cam'?'e-cam':'e-gal';
+  const f=document.getElementById(id).files[0];
+  if(f) document.getElementById('e-file-lbl').textContent='📎 '+f.name+' ✓';
 }
 
 // Compress image before saving (max 1000px wide, JPEG 70% quality) — keeps localStorage small
@@ -772,7 +713,9 @@ function saveEntry(){
     else D.txns.unshift({id:uid(),...obj});
     sv(); goBack(); renderTxns(_pty); renderStrip(_pty); renderList();
   };
-  const f=document.getElementById('e-file').files[0];
+  const fCam=document.getElementById('e-cam').files[0];
+  const fGal=document.getElementById('e-gal').files[0];
+  const f=fCam||fGal;
   if(f&&!editId){
     compressImage(f, dataUrl=>{
       if(!dataUrl){alert('Bill attach nahi ho saka, dobara try karen');doSave(null);return;}
@@ -995,9 +938,18 @@ function autoOT(){
   const oel=document.getElementById('ap-ot');
   if(r>0&&(!oel.value||oel.dataset.auto==='1')){oel.value=Math.round(r/8);oel.dataset.auto='1';}
 }
-function apPhotoLoad(){
-  const f=document.getElementById('ap-ph').files[0];if(!f)return;
-  const r=new FileReader();r.onload=e=>{const av=document.getElementById('ap-av');av.innerHTML='';const img=document.createElement('img');img.src=e.target.result;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';av.appendChild(img);av.dataset.photo=e.target.result;};r.readAsDataURL(f);
+function apPhotoLoad(src){
+  const id=src==='cam'?'ap-cam':src==='gal'?'ap-gal':'ap-ph';
+  const f=document.getElementById(id).files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{
+    const av=document.getElementById('ap-av');
+    av.innerHTML='';
+    const img=document.createElement('img');
+    img.src=e.target.result;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';
+    av.appendChild(img);
+    av.dataset.photo=e.target.result;
+  };r.readAsDataURL(f);
 }
 function saveParty(){
   const name=document.getElementById('ap-name').value.trim();
@@ -1223,7 +1175,10 @@ function renderSalHist(){
     const proj=D.parties.find(x=>x.id===s.projId);
     return`<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600">${l?l.name:'?'} <span style="font-size:10px;background:#f0fdf4;color:#166534;padding:2px 7px;border-radius:20px">Saved</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:28px;height:28px;border-radius:50%;background:${l?'#eff6ff':'#f3f4f6'};color:#1e429f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden">${l&&l.photo?`<img src="${l.photo}" style="width:100%;height:100%;object-fit:cover">`:(l?ini(l.name):'?')}</div>
+            <div style="font-size:13px;font-weight:600">${l?l.name:'?'} <span style="font-size:10px;background:#f0fdf4;color:#166534;padding:2px 7px;border-radius:20px">Saved</span></div>
+          </div>
         <div style="font-size:11px;color:#9ca3af;margin-top:3px">${MN[s.mon]} ${s.yr} • ${s.days} din${proj?' • '+proj.name:''}</div>
         <div style="font-size:11px;color:#9ca3af">Basic: ${fmt(s.basic||0)}${s.alwAmt>0?' | Alw: '+fmt(s.alwAmt):''}${s.otAmt>0?' | OT: '+fmt(s.otAmt):''}${s.advDeduct>0?' | Adv: −'+fmt(s.advDeduct):''}</div>
       </div>
@@ -1562,7 +1517,6 @@ function restoreJSON(ev){
 }
 
 ld();
-initFirebase();
 document.getElementById('h-dt').textContent=new Date().toLocaleDateString('en-PK',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
 document.getElementById('e-date').value=td();
 document.getElementById('ap-join').value=td();
