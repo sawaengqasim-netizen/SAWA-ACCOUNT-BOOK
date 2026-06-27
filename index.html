@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a56db">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CK Khata">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAABmJLR0QA/wD/AP+gvaeTAAAEbklEQVR4nO3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg==">
+<link rel="manifest" href="manifest.json">
+<title>ContractorKhata</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f4f6;color:#111827;font-size:14px}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.pg{display:none;min-height:100vh;flex-direction:column}
+.pg.on{display:flex}
+.bar{background:#1a56db;color:#fff;padding:11px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:99}
+.bar .back{background:none;border:none;color:#fff;font-size:24px;line-height:1;cursor:pointer;padding:0;width:28px}
+.bar .ttl{flex:1;font-size:16px;font-weight:600}
+.bar .act{background:rgba(255,255,255,.2);border:none;color:#fff;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.hdr{background:linear-gradient(135deg,#1a56db,#1e429f);color:#fff;padding:18px 16px 22px}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.hdr-av{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;overflow:hidden;cursor:pointer;flex-shrink:0}
+.hdr-av img{width:100%;height:100%;object-fit:cover}
+.hdr-biz{font-size:16px;font-weight:700}
+.hdr-dt{font-size:11px;opacity:.8;margin-top:2px}
+.bal-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.bal-box{background:rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;text-align:center}
+.bal-val{font-size:16px;font-weight:700;font-family:monospace}
+.bal-lbl{font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.srch{padding:12px 16px 6px}
+.srch input{width:100%;padding:9px 12px 9px 36px;border:1px solid #d1d5db;border-radius:8px;background:#fff;font-size:13px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center;outline:none}
+.cats{display:flex;gap:6px;padding:6px 16px 10px;overflow-x:auto;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{padding:5px 13px;border:1.5px solid #d1d5db;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;background:#fff;color:#6b7280}
+.cat.on{border-color:#1a56db;background:#eff6ff;color:#1e429f}
+.plist{flex:1;overflow-y:auto;padding:0 16px 80px}
+.pcard{background:#fff;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.pcard:active{transform:scale(.98)}
+.pav{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden}
+.pav img{width:100%;height:100%;object-fit:cover}
+.pinfo{flex:1;min-width:0}
+.pname{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psub{font-size:11px;color:#9ca3af;margin-top:2px}
+.pbal{text-align:right;flex-shrink:0}
+.pbal-amt{font-size:14px;font-weight:700;font-family:monospace}
+.pbal-lbl{font-size:10px;color:#9ca3af;margin-top:1px}
+.bnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e5e7eb;display:flex;z-index:80}
+.bnav-btn{flex:1;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;color:#9ca3af;font-size:10px;font-weight:500;cursor:pointer}
+.bnav-btn.on{color:#1a56db}
+.bnav-btn svg{width:22px;height:22px}
+.fab{position:fixed;bottom:68px;right:18px;width:54px;height:54px;background:#1a56db;color:#fff;border:none;border-radius:50%;font-size:28px;cursor:pointer;box-shadow:0 4px 14px rgba(26,86,219,.4);display:flex;align-items:center;justify-content:center;z-index:81}
+.party-hdr{background:linear-gradient(135deg,#1a56db,#1e429f);color:#fff;padding:16px;display:flex;gap:14px;align-items:center}
+.party-av-lg{width:58px;height:58px;border-radius:50%;border:2.5px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;overflow:hidden;flex-shrink:0}
+.party-av-lg img{width:100%;height:100%;object-fit:cover}
+.party-hdr-info{flex:1;min-width:0}
+.party-hdr-name{font-size:18px;font-weight:700}
+.party-hdr-sub{font-size:12px;opacity:.8;margin-top:3px}
+.bstrip{display:grid;grid-template-columns:1fr 1fr 1fr;background:#fff;border-bottom:1px solid #e5e7eb}
+.bs-item{padding:11px 8px;text-align:center;border-right:1px solid #e5e7eb}
+.bs-item:last-child{border-right:none}
+.bs-val{font-size:15px;font-weight:700;font-family:monospace}
+.bs-lbl{font-size:10px;color:#9ca3af;text-transform:uppercase;margin-top:2px}
+.txn-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid #e5e7eb}
+.tbtn-r{background:#f0fdf4;border:2px solid #16a34a;color:#166534;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.tbtn-p{background:#fef2f2;border:2px solid #dc2626;color:#991b1b;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.tlist{flex:1;overflow-y:auto;padding:0 16px 20px}
+.trow{background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.tdot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.tmid{flex:1;min-width:0}
+.tdesc{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmeta{font-size:11px;color:#9ca3af;margin-top:2px}
+.tamt{text-align:right;flex-shrink:0}
+.tamt-val{font-size:15px;font-weight:700;font-family:monospace}
+.tbal{font-size:10px;color:#9ca3af;margin-top:2px}
+.eform{flex:1;overflow-y:auto;padding:16px}
+.epty-row{display:flex;align-items:center;gap:12px;background:#f9fafb;border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.amt-wrap{margin-bottom:14px;position:relative}
+.amt-wrap .rs{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:22px;font-weight:700;color:#6b7280}
+.amt-wrap input{width:100%;padding:15px 14px 15px 46px;font-size:28px;font-weight:700;font-family:monospace;border:2px solid #d1d5db;border-radius:12px;outline:none;background:#fff}
+.amt-wrap input:focus{border-color:#1a56db}
+.fld{margin-bottom:12px}
+.fld label{font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
+.fld input,.fld select,.fld textarea{width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;font-family:inherit;color:#111827;background:#fff;outline:none}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#1a56db}
+.fld textarea{min-height:56px;resize:vertical}
+.attach-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px dashed #d1d5db;border-radius:8px;cursor:pointer;margin-bottom:14px;font-size:13px;color:#6b7280}
+.attach-row input{display:none}
+.sbtn{width:100%;padding:14px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px}
+.sbtn.recv{background:#16a34a;color:#fff}
+.sbtn.pay{background:#dc2626;color:#fff}
+.sbtn.blue{background:#1a56db;color:#fff}
+.sbtn.gray{background:#f3f4f6;color:#374151;border:1.5px solid #d1d5db}
+.aparty{flex:1;overflow-y:auto;padding:16px}
+.av-up{width:80px;height:80px;border-radius:50%;background:#eff6ff;border:2px dashed #1a56db;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin:0 auto 18px;overflow:hidden}
+.av-up img{width:100%;height:100%;object-fit:cover}
+.av-up input{display:none}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.csel{padding:10px 4px;border:2px solid #e5e7eb;border-radius:10px;text-align:center;cursor:pointer;font-size:12px;font-weight:500;color:#6b7280;background:#fff;font-family:inherit}
+.csel .ico{font-size:20px;display:block;margin-bottom:4px}
+.csel.on{border-color:#1a56db;background:#eff6ff;color:#1e429f}
+.sal-pg{flex:1;overflow-y:auto;padding:16px}
+.step-card{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.step-lbl{font-size:11px;font-weight:700;color:#1a56db;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.sal-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
+.sal-row:last-child{border-bottom:none}
+.lab-card{display:flex;align-items:center;gap:12px;background:#eff6ff;border-radius:10px;padding:10px 12px;margin-top:10px}
+.lab-card-av{width:42px;height:42px;border-radius:50%;background:#1a56db;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden}
+.lab-card-av img{width:100%;height:100%;object-fit:cover}
+.rep-pg{flex:1;overflow-y:auto;padding:16px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.stat-box{background:#fff;border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.stat-val{font-size:17px;font-weight:700;font-family:monospace}
+.stat-lbl{font-size:10px;color:#9ca3af;text-transform:uppercase;margin-top:3px}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.msheet{background:#fff;border-radius:18px 18px 0 0;padding:20px 16px 32px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+.msheet h3{font-size:15px;font-weight:700;text-align:center;margin-bottom:16px;color:#111827}
+.mact{padding:13px 14px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;background:#fff;color:#111827;text-align:left;display:flex;align-items:center;gap:10px;width:100%;font-family:inherit;margin-bottom:8px}
+.mact.red{color:#dc2626;border-color:#fca5a5;background:#fef2f2}
+.mact.grn{color:#16a34a;border-color:#86efac;background:#f0fdf4}
+.set-pg{flex:1;overflow-y:auto;padding:16px}
+.empty{text-align:center;padding:40px 16px;color:#9ca3af;font-size:14px}
+.empty-ico{font-size:48px;display:block;margin-bottom:12px}
+@media(max-width:400px){.bal-row{grid-template-columns:1fr 1fr}.bal-box:last-child{grid-column:span 2}}
+</style>
+</head>
+<body>
+
+<div class="pg on" id="pg-home">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-av" id="h-av" onclick="goto('pg-settings')"><span id="h-init">CK</span></div>
+      <div style="flex:1;min-width:0">
+        <div class="hdr-biz" id="h-biz">ContractorKhata</div>
+        <div class="hdr-dt" id="h-dt"></div>
+      </div>
+      <button id="pwa-install-btn" onclick="installPWA()" style="display:none;background:rgba(255,255,255,.2);border:none;color:#fff;padding:5px 10px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;flex-shrink:0">📲 Install</button>
+    </div>
+    <div class="bal-row">
+      <div class="bal-box"><div class="bal-val" id="hb-bank">0</div><div class="bal-lbl">Bank/Cash</div></div>
+      <div class="bal-box"><div class="bal-val" style="color:#86efac" id="hb-in">0</div><div class="bal-lbl">Total In</div></div>
+      <div class="bal-box"><div class="bal-val" style="color:#fca5a5" id="hb-out">0</div><div class="bal-lbl">Total Out</div></div>
+    </div>
+  </div>
+  <div class="srch"><input id="h-srch" placeholder="Naam se search..." oninput="renderList()"></div>
+  <div class="cats">
+    <button class="cat on" onclick="setFilter('all',this)">Sab</button>
+    <button class="cat" onclick="setFilter('client',this)">👤 Client</button>
+    <button class="cat" onclick="setFilter('supplier',this)">🏪 Supplier</button>
+    <button class="cat" onclick="setFilter('labor',this)">👷 Labor</button>
+    <button class="cat" onclick="setFilter('bank',this)">🏦 Bank/Cash</button>
+    <button class="cat" onclick="setFilter('project',this)">🏗️ Project</button>
+  </div>
+  <div class="plist" id="p-list"></div>
+  <div class="bnav">
+    <button class="bnav-btn on" onclick="goto('pg-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+    <button class="bnav-btn" onclick="goto('pg-salary')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Salary</button>
+    <button class="bnav-btn" onclick="goto('pg-reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</button>
+    <button class="bnav-btn" onclick="goto('pg-settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</button>
+  </div>
+  <button class="fab" onclick="openAddParty(null)">+</button>
+</div>
+
+<div class="pg" id="pg-party">
+  <div class="bar"><button class="back" onclick="goBack()">‹</button><div class="ttl" id="pty-ttl">Party</div><button class="act" onclick="openPartyMenu()">⋮</button></div>
+  <div class="party-hdr" id="pty-hdr"></div>
+  <div class="bstrip" id="pty-strip"></div>
+  <div class="txn-btns">
+    <button class="tbtn-r" onclick="openEntry('recv')">+ Received</button>
+    <button class="tbtn-p" onclick="openEntry('pay')">− Payment</button>
+  </div>
+  <div class="tlist" id="t-list"></div>
+</div>
+
+<div class="pg" id="pg-entry">
+  <div class="bar" id="e-bar"><button class="back" onclick="goBack()">‹</button><div class="ttl" id="e-ttl">Entry</div></div>
+  <div class="eform">
+    <div class="epty-row" id="e-pty-row"></div>
+    <div class="amt-wrap"><span class="rs">Rs</span><input type="number" id="e-amt" placeholder="0" min="0"></div>
+    <div class="fld"><label>Tafseeli (Detail)</label><input type="text" id="e-desc" placeholder="e.g. Advance payment, Sement..."></div>
+    <div class="fld"><label>Tarikh</label><input type="date" id="e-date"></div>
+    <div class="fld"><label>Link Account (optional)</label><select id="e-link-sel"><option value="">-- Link Account (optional) --</option></select></div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Bill / Receipt (optional)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button type="button" onclick="document.getElementById('e-cam').click()" style="padding:10px;border:1.5px dashed #d1d5db;border-radius:8px;background:#fff;font-size:13px;color:#6b7280;cursor:pointer;font-family:inherit">📷 Camera</button>
+        <button type="button" onclick="document.getElementById('e-gal').click()" style="padding:10px;border:1.5px dashed #d1d5db;border-radius:8px;background:#fff;font-size:13px;color:#6b7280;cursor:pointer;font-family:inherit">🖼️ Gallery / File</button>
+      </div>
+      <div id="e-file-lbl" style="font-size:12px;color:#9ca3af;margin-top:6px">Koi file select nahi</div>
+      <input type="file" id="e-cam" accept="image/*" capture="environment" style="display:none" onchange="onFileChange('cam')">
+      <input type="file" id="e-gal" accept="image/*,.pdf" style="display:none" onchange="onFileChange('gal')">
+    </div>
+    <button class="sbtn" id="e-save-btn" onclick="saveEntry()">Save</button>
+    <button class="sbtn gray" onclick="goBack()">Cancel</button>
+    <input type="hidden" id="e-edit-id">
+    <input type="hidden" id="e-etype">
+  </div>
+</div>
+
+<div class="pg" id="pg-aparty">
+  <div class="bar"><button class="back" onclick="goBack()">‹</button><div class="ttl" id="ap-ttl">New Account</div></div>
+  <div class="aparty">
+    <div style="margin-bottom:14px">
+      <label style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:8px">Category *</label>
+      <div class="cat-grid">
+        <button class="csel" data-c="client" onclick="selCat(this)"><span class="ico">👤</span>Client</button>
+        <button class="csel" data-c="supplier" onclick="selCat(this)"><span class="ico">🏪</span>Supplier</button>
+        <button class="csel" data-c="labor" onclick="selCat(this)"><span class="ico">👷</span>Labor</button>
+        <button class="csel" data-c="bank" onclick="selCat(this)"><span class="ico">🏦</span>Bank/Cash</button>
+        <button class="csel" data-c="project" onclick="selCat(this)"><span class="ico">🏗️</span>Project</button>
+        <button class="csel" data-c="other" onclick="selCat(this)"><span class="ico">📋</span>Other</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:14px">
+      <div style="flex-shrink:0;text-align:center">
+        <div class="av-up" id="ap-av" onclick="document.getElementById('ap-cam').click()" style="width:72px;height:72px;margin:0 auto 6px">
+          <span style="font-size:24px">📷</span>
+        </div>
+        <div style="display:flex;gap:5px;justify-content:center;margin-top:5px">
+          <button type="button" onclick="document.getElementById('ap-cam').click()" style="font-size:10px;padding:3px 8px;border:1px solid #1a56db;border-radius:6px;background:#eff6ff;color:#1e429f;cursor:pointer;font-family:inherit">📷 Camera</button>
+          <button type="button" onclick="document.getElementById('ap-gal').click()" style="font-size:10px;padding:3px 8px;border:1px solid #d1d5db;border-radius:6px;background:#fff;color:#6b7280;cursor:pointer;font-family:inherit">🖼️ Gallery</button>
+        </div>
+      </div>
+      <div style="flex:1">
+        <div class="fld" style="margin-bottom:10px"><label>Naam *</label><input type="text" id="ap-name" placeholder="Naam"></div>
+        <div class="fld" style="margin:0"><label>Phone / WhatsApp</label><input type="tel" id="ap-phone" placeholder="+92..."></div>
+      </div>
+    </div>
+    <input type="file" id="ap-cam" accept="image/*" capture="environment" style="display:none" onchange="apPhotoLoad('cam')">
+    <input type="file" id="ap-gal" accept="image/*" style="display:none" onchange="apPhotoLoad('gal')">
+    <input type="file" id="ap-ph" accept="image/*" style="display:none" onchange="apPhotoLoad('ph')">
+    <div class="fld"><label>Address</label><input type="text" id="ap-addr" placeholder="optional"></div>
+    <div class="fld"><label>Note</label><input type="text" id="ap-note" placeholder="optional"></div>
+    <div id="ap-lab-flds" style="display:none">
+      <div style="background:#eff6ff;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:#1e429f">Daily Rate daalo — OT rate auto (Rate ÷ 8)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="fld" style="margin:0"><label>Daily Rate *</label><input type="number" id="ap-rate" placeholder="2000" oninput="autoOT()"></div>
+        <div class="fld" style="margin:0"><label>OT Rate (Rs/hr)</label><input type="number" id="ap-ot" placeholder="auto"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+        <div class="fld" style="margin:0"><label>Daily Allowance</label><input type="number" id="ap-alw" placeholder="0"></div>
+        <div class="fld" style="margin:0"><label>Joining Date</label><input type="date" id="ap-join"></div>
+      </div>
+      <div class="fld" style="margin-top:8px"><label>CNIC</label><input type="text" id="ap-cnic" placeholder="optional"></div>
+    </div>
+    <div id="ap-bank-flds" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="fld" style="margin:0"><label>Type</label>
+          <select id="ap-btype"><option value="bank">Bank</option><option value="cash">Cash</option><option value="easypaisa">Easypaisa</option><option value="jazzcash">JazzCash</option></select>
+        </div>
+        <div class="fld" style="margin:0"><label>Opening Balance</label><input type="number" id="ap-obal" placeholder="0" value="0"></div>
+      </div>
+      <div class="fld" style="margin-top:8px"><label>Account Number</label><input type="text" id="ap-anum" placeholder="optional"></div>
+    </div>
+    <input type="hidden" id="ap-id">
+    <button class="sbtn blue" onclick="saveParty()" style="margin-top:8px">💾 Save</button>
+  </div>
+</div>
+
+<div class="pg" id="pg-salary">
+  <div class="bar"><button class="back" onclick="goto('pg-home')">‹</button><div class="ttl">Salary</div><button class="act" onclick="toggleSalCalc()" id="sl-calc-toggle-btn">+</button></div>
+  <div class="sal-pg">
+
+    <!-- COLLAPSIBLE CALCULATOR -->
+    <div id="sl-calc-wrap" style="display:none">
+      <div class="step-card">
+        <div class="step-lbl">Step 1 — Labor *</div>
+        <select id="sl-lab" onchange="onLabChange()" style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;font-family:inherit;outline:none">
+          <option value="">-- Labor choose karen --</option>
+        </select>
+        <div id="sl-lab-card" style="display:none" class="lab-card">
+          <div class="lab-card-av" id="sl-lav"></div>
+          <div><div id="sl-lname" style="font-size:14px;font-weight:700;color:#1e429f"></div><div id="sl-lrate" style="font-size:12px;color:#3b82f6;margin-top:2px"></div></div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-lbl">Step 2 — Period</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="fld" style="margin:0"><label>Mahina</label>
+            <select id="sl-mon"><option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option></select>
+          </div>
+          <div class="fld" style="margin:0"><label>Saal</label><input type="number" id="sl-yr" value="2025" min="2020" max="2035"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+          <div class="fld" style="margin:0"><label>Haazri (Din)</label><input type="number" id="sl-days" placeholder="0" oninput="calcSal()"></div>
+          <div class="fld" style="margin:0"><label>Overtime (Hours)</label><input type="number" id="sl-ot" placeholder="0" oninput="calcSal()"></div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-lbl">Step 3 — Project (optional)</div>
+        <select id="sl-proj" onchange="calcSal()" style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;font-family:inherit;outline:none">
+          <option value="">-- Koi project nahi --</option>
+        </select>
+      </div>
+      <div id="sl-result" style="display:none">
+        <div class="step-card" id="sl-breakdown"></div>
+        <div style="background:#eff6ff;border-radius:10px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#1e429f">
+          💡 Save ke baad Labor account mein jao → <b>−Payment</b> se salary do. Bank balance update ho jayega.
+        </div>
+        <button class="sbtn blue" onclick="saveSalary()">💾 Save Salary Record</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <button class="sbtn" style="background:#dc2626;color:#fff;margin:0" onclick="printSlipPdf()">📄 PDF Slip</button>
+          <button class="sbtn" style="background:#16a34a;color:#fff;margin:0" onclick="printSlipExcel()">📊 Excel Slip</button>
+        </div>
+        <button class="sbtn" id="sl-wa-btn" style="background:#25d366;color:#fff;display:none" onclick="salWA()">💬 WhatsApp (Optional)</button>
+      </div>
+    </div>
+
+    <button class="sbtn blue" id="sl-new-btn" onclick="toggleSalCalc()" style="margin-bottom:14px">➕ Nayi Salary Banayen</button>
+
+    <!-- HISTORY WITH FILTER + EXPORT -->
+    <div class="step-card">
+      <div class="step-lbl">Filter</div>
+      <div class="fld"><label>Labor (optional)</label><select id="slh-lab" onchange="renderSalHist()"><option value="">-- Sab Labor --</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="fld" style="margin:0"><label>Mahina (optional)</label>
+          <select id="slh-mon" onchange="renderSalHist()">
+            <option value="">-- Sab Mahine --</option>
+            <option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option>
+          </select>
+        </div>
+        <div class="fld" style="margin:0"><label>Saal (optional)</label><select id="slh-yr" onchange="renderSalHist()"><option value="">-- Sab Saal --</option></select></div>
+      </div>
+      <div class="fld" style="margin-top:8px"><label>Project (optional)</label><select id="slh-proj" onchange="renderSalHist()"><option value="">-- Sab Project --</option></select></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px" id="sl-hist-lbl">Salary History</div>
+    <div id="sl-hist"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+      <button class="sbtn" style="background:#dc2626;color:#fff;margin:0" onclick="salHistPdf()">📄 History PDF</button>
+      <button class="sbtn" style="background:#16a34a;color:#fff;margin:0" onclick="salHistExcel()">📊 History Excel</button>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-reports">
+  <div class="bar"><button class="back" onclick="goto('pg-home')">‹</button><div class="ttl">Reports</div></div>
+  <div style="display:flex;gap:0;background:#fff;border-bottom:1px solid #e5e7eb">
+    <button id="rtab-txn" class="cat on" style="flex:1;border-radius:0;border:none;border-bottom:2.5px solid #1a56db;background:#eff6ff;color:#1e429f;padding:11px 6px" onclick="switchReportTab('txn')">💰 Transactions</button>
+    <button id="rtab-sal" class="cat" style="flex:1;border-radius:0;border:none;border-bottom:2.5px solid transparent;padding:11px 6px" onclick="switchReportTab('sal')">👷 Salary</button>
+  </div>
+
+  <div id="rtab-body-txn" class="rep-pg">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="fld" style="margin:0"><label>From</label><input type="date" id="r-from"></div>
+      <div class="fld" style="margin:0"><label>To</label><input type="date" id="r-to"></div>
+    </div>
+    <button class="sbtn blue" onclick="buildReport()" style="margin-bottom:14px">📊 Report Banao</button>
+    <div id="r-body"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+      <button class="sbtn" style="background:#16a34a;color:#fff;margin:0" onclick="xlExport()">📥 Excel</button>
+      <button class="sbtn gray" style="margin:0" onclick="backupJSON()">💾 Backup</button>
+    </div>
+    <button class="sbtn gray" style="margin-top:8px" onclick="document.getElementById('r-restore').click()">🔄 Restore</button>
+    <input type="file" id="r-restore" accept=".json" style="display:none" onchange="restoreJSON(event)">
+  </div>
+
+  <div id="rtab-body-sal" class="rep-pg" style="display:none">
+    <div class="fld"><label>Labor (optional)</label><select id="rs-lab"><option value="">-- Sab Labor --</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="fld" style="margin:0"><label>From</label><input type="date" id="rs-from"></div>
+      <div class="fld" style="margin:0"><label>To</label><input type="date" id="rs-to"></div>
+    </div>
+    <button class="sbtn blue" onclick="buildSalReport()" style="margin-bottom:14px">📊 Salary Report Banao</button>
+    <div id="rs-body"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+      <button class="sbtn" style="background:#dc2626;color:#fff;margin:0" onclick="salRptPdf()">📄 PDF</button>
+      <button class="sbtn" style="background:#16a34a;color:#fff;margin:0" onclick="salRptExcel()">📊 Excel</button>
+    </div>
+  </div>
+</div>
+
+<div class="pg" id="pg-settings">
+  <div class="bar"><button class="back" onclick="goto('pg-home')">‹</button><div class="ttl">Profile & Settings</div></div>
+  <div class="set-pg">
+    <div style="text-align:center;margin-bottom:18px">
+      <div class="av-up" id="set-av" onclick="document.getElementById('set-ph').click()" style="width:84px;height:84px">
+        <span id="set-init" style="font-size:26px;font-weight:700;color:#1a56db">CK</span>
+      </div>
+      <input type="file" id="set-ph" accept="image/*" style="display:none" onchange="setPhotoLoad()">
+    </div>
+    <div class="fld"><label>Business Naam</label><input type="text" id="set-biz" placeholder="e.g. Ali Contractor"></div>
+    <div class="fld"><label>Malik ka Naam</label><input type="text" id="set-owner" placeholder="Naam"></div>
+    <div class="fld"><label>Phone</label><input type="tel" id="set-phone" placeholder="+92..."></div>
+    <div class="fld"><label>Address</label><input type="text" id="set-addr" placeholder="optional"></div>
+    <div class="fld"><label>Shehar</label><input type="text" id="set-city" placeholder="Karachi"></div>
+    <button class="sbtn blue" onclick="saveSettings()">💾 Save</button>
+    <div id="set-ok" style="display:none;text-align:center;color:#16a34a;font-size:13px;margin-top:8px">✓ Saved!</div>
+    <button class="sbtn gray" style="margin-top:8px;color:#dc2626;border-color:#fca5a5" onclick="clearData()">🗑️ Sab Data Delete</button>
+  </div>
+</div>
+
+<div class="ov" id="m-txn">
+  <div class="msheet">
+    <h3 id="m-txn-ttl">Transaction</h3>
+    <button class="mact" onclick="editTxn()">✏️ Edit Entry</button>
+    <button class="mact" id="m-bill-btn" style="display:none" onclick="viewBill()">📎 Bill Dekhen</button>
+    <button class="mact grn" onclick="waTxn()">💬 WhatsApp</button>
+    <button class="mact red" onclick="delTxn()">🗑️ Delete</button>
+    <button class="mact" onclick="closeM('m-txn')">❌ Cancel</button>
+  </div>
+</div>
+
+<div class="ov" id="m-confirm">
+  <div class="msheet">
+    <h3 id="mc-title">Delete Karen?</h3>
+    <p id="mc-msg" style="font-size:13px;color:#6b7280;text-align:center;margin-bottom:18px;line-height:1.6"></p>
+    <button class="sbtn" style="background:#dc2626;color:#fff" id="mc-confirm-btn">🗑️ Haan, Delete Karen</button>
+    <button class="sbtn gray" onclick="closeM('m-confirm')">Cancel</button>
+  </div>
+</div>
+
+<div class="ov" id="m-pty">
+  <div class="msheet">
+    <h3 id="m-pty-ttl">Options</h3>
+    <button class="mact" onclick="editPty()">✏️ Edit Profile</button>
+    <button class="mact grn" onclick="waPty()">💬 WhatsApp</button>
+    <button class="mact" onclick="openRptDateModal()">📊 Report / PDF</button>
+    <button class="mact red" onclick="delPty()">🗑️ Delete Account</button>
+    <button class="mact" onclick="closeM('m-pty')">❌ Cancel</button>
+  </div>
+</div>
+
+<!-- DATE RANGE MODAL for party report -->
+<div class="ov" id="m-rptdate">
+  <div class="msheet">
+    <h3>Report Date Range</h3>
+    <div class="fld"><label>From (optional — khali chodain sab data ke liye)</label><input type="date" id="rd-from"></div>
+    <div class="fld"><label>To</label><input type="date" id="rd-to"></div>
+    <button class="sbtn" style="background:#dc2626;color:#fff" onclick="rptPtyPdf()">📄 PDF Download</button>
+    <button class="sbtn" style="background:#16a34a;color:#fff" onclick="rptPtyExcel()">📊 Excel Download</button>
+    <button class="sbtn gray" onclick="closeM('m-rptdate')">Cancel</button>
+  </div>
+</div>
+
+<!-- INLINE BILL VIEWER -->
+<div id="bill-viewer" style="display:none;position:fixed;inset:0;background:#000;z-index:300;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#111">
+    <button onclick="closeBillViewer()" style="background:none;border:none;color:#fff;font-size:24px;cursor:pointer;padding:0">×</button>
+    <a id="bv-download" href="#" download="bill" style="color:#fff;background:#1a56db;padding:8px 16px;border-radius:8px;font-size:13px;text-decoration:none;font-weight:600">⬇️ Download</a>
+  </div>
+  <div style="flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:10px">
+    <img id="bv-img" style="display:none;max-width:100%;max-height:100%;object-fit:contain">
+    <iframe id="bv-pdf" style="display:none;width:100%;height:100%;border:none;background:#fff"></iframe>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const SK='ck_fin2';
+let D={prof:{biz:'',owner:'',phone:'',addr:'',city:'',photo:null},parties:[],txns:[],salary:[],advances:[]};
+
+const sv=()=>{
+  try{
+    localStorage.setItem(SK,JSON.stringify(D));
+    return true;
+  }catch(e){
+    alert('⚠️ Storage full! Data save nahi ho saka.\n\nPurani bills/photos delete karen ya JSON Backup lekar purana data clear karen (Reports > Backup).');
+    return false;
+  }
+};
+const ld=()=>{try{const s=localStorage.getItem(SK);if(s){const p=JSON.parse(s);D={...D,...p}}}catch(e){}};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const td=()=>new Date().toISOString().split('T')[0];
+const fmt=n=>'Rs '+(Math.round(Number(n)||0)).toLocaleString('en-PK');
+const fmtN=n=>(Math.round(Number(n)||0)).toLocaleString('en-PK');
+const ini=s=>(s||'CK').split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'CK';
+const MN=['January','February','March','April','May','June','July','August','September','November','December'];
+MN[9]='October';MN[10]='November';MN[11]='December';
+const CC={client:'#1d4ed8',supplier:'#6d28d9',labor:'#065f46',bank:'#92400e',project:'#9f1239',other:'#374151'};
+const CB={client:'#eff6ff',supplier:'#faf5ff',labor:'#f0fdf4',bank:'#fffbeb',project:'#fff1f2',other:'#f9fafb'};
+const CL={client:'Client',supplier:'Supplier',labor:'Labor',bank:'Bank/Cash',project:'Project',other:'Other'};
+
+let _hist=[];
+let _pty=null;
+let _txn=null;
+let _eType='recv';
+
+function goto(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  if(id==='pg-home') renderList();
+  if(id==='pg-salary'){
+    resetSalaryCalc();
+    fillSalDrops();
+    fillSalHistLabDrop();
+    renderSalHist();
+  }
+  if(id==='pg-reports'){ buildReport(); fillSalRptDrop(); }
+}
+function push(id){
+  const cur=document.querySelector('.pg.on');
+  if(cur) _hist.push(cur.id);
+  goto(id);
+}
+function goBack(){
+  const prev=_hist.pop();
+  if(prev) goto(prev); else goto('pg-home');
+}
+const openM=id=>document.getElementById(id).classList.add('on');
+const closeM=id=>document.getElementById(id).classList.remove('on');
+
+function bal(pid){
+  const p=D.parties.find(x=>x.id===pid);
+  if(!p) return {r:0,p:0,n:0};
+  let r=0,pay=0;
+  if(p.cat==='bank') r+=Number(p.obal||0);
+  D.txns.filter(t=>t.pid===pid).forEach(t=>{ t.type==='recv'?r+=t.amt:pay+=t.amt; });
+  D.txns.filter(t=>t.accId===pid&&t.pid!==pid).forEach(t=>{ t.type==='recv'?r+=t.amt:pay+=t.amt; });
+  return {r,p:pay,n:r-pay};
+}
+
+let _filt='all';
+function setFilter(f,el){
+  _filt=f;
+  document.querySelectorAll('.cat').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  renderList();
+}
+function renderList(){
+  const q=(document.getElementById('h-srch').value||'').toLowerCase();
+  const list=D.parties.filter(p=>{
+    if(_filt!=='all'&&p.cat!==_filt) return false;
+    if(q&&!p.name.toLowerCase().includes(q)&&!(p.phone||'').includes(q)) return false;
+    return true;
+  });
+  const el=document.getElementById('p-list');
+  if(!list.length){el.innerHTML=`<div class="empty"><span class="empty-ico">📋</span>Koi account nahi — + se add karen</div>`;updateHomeBal();return;}
+  el.innerHTML=list.map(p=>{
+    const b=bal(p.id);
+    const color=CC[p.cat]||CC.other;
+    const bg=CB[p.cat]||CB.other;
+    const balColor=b.n>=0?'#16a34a':'#dc2626';
+    const balLbl=p.cat==='bank'?(b.n>=0?'Balance':'Overdraft'):(b.n>=0?'Milna Hai':'Dena Hai');
+    return`<div class="pcard" onclick="openParty('${p.id}')">
+      <div class="pav" style="background:${bg};color:${color}">${p.photo?`<img src="${p.photo}">`:(ini(p.name))}</div>
+      <div class="pinfo"><div class="pname">${p.name}</div><div class="psub">${CL[p.cat]||p.cat}${p.phone?' • '+p.phone:''}</div></div>
+      <div class="pbal"><div class="pbal-amt" style="color:${balColor}">${fmtN(Math.abs(b.n))}</div><div class="pbal-lbl">${balLbl}</div></div>
+    </div>`;
+  }).join('');
+  updateHomeBal();
+}
+function updateHomeBal(){
+  let bankTotal=0,totalIn=0,totalOut=0;
+  D.parties.filter(p=>p.cat==='bank').forEach(p=>{bankTotal+=bal(p.id).n;});
+  D.txns.forEach(t=>{t.type==='recv'?totalIn+=t.amt:totalOut+=t.amt;});
+  document.getElementById('hb-bank').textContent=fmtN(bankTotal);
+  document.getElementById('hb-in').textContent=fmtN(totalIn);
+  document.getElementById('hb-out').textContent=fmtN(totalOut);
+}
+
+function openParty(id){
+  _pty=id;
+  const p=D.parties.find(x=>x.id===id);if(!p)return;
+  document.getElementById('pty-ttl').textContent=p.name;
+  const color=CC[p.cat]||CC.other;
+  const bg=CB[p.cat]||CB.other;
+  const sub=p.cat==='labor'?`Rate: ${fmt(p.rate||0)}/din | OT: ${fmt(p.otr||0)}/hr | Alw: ${fmt(p.alw||0)}/din`:
+    p.cat==='bank'?`${p.btype||'Bank'}${p.anum?' • '+p.anum:''} | Opening: ${fmt(p.obal||0)}`:(p.phone||'');
+  document.getElementById('pty-hdr').innerHTML=`
+    <div class="party-av-lg" style="background:${bg};color:${color}">${p.photo?`<img src="${p.photo}">`:(ini(p.name))}</div>
+    <div class="party-hdr-info">
+      <div class="party-hdr-name">${p.name}</div>
+      <div class="party-hdr-sub">${CL[p.cat]||p.cat}${p.addr?' • '+p.addr:''}</div>
+      <div style="font-size:11px;opacity:.8;margin-top:2px">${sub}</div>
+    </div>`;
+  renderStrip(id);
+  renderTxns(id);
+  push('pg-party');
+}
+function renderStrip(id){
+  const p=D.parties.find(x=>x.id===id);
+  const b=bal(id);
+  const isBank=p&&p.cat==='bank';
+  document.getElementById('pty-strip').innerHTML=`
+    <div class="bs-item"><div class="bs-val" style="color:#16a34a">${fmtN(b.r)}</div><div class="bs-lbl">${isBank?'Jama (In)':'Received'}</div></div>
+    <div class="bs-item"><div class="bs-val" style="color:#dc2626">${fmtN(b.p)}</div><div class="bs-lbl">${isBank?'Nikala (Out)':'Paid'}</div></div>
+    <div class="bs-item"><div class="bs-val" style="color:${b.n>=0?'#16a34a':'#dc2626'}">${fmtN(Math.abs(b.n))}</div><div class="bs-lbl">${b.n>=0?'Balance':'Due'}</div></div>`;
+}
+function renderTxns(pid){
+  const el=document.getElementById('t-list');
+  const p=D.parties.find(x=>x.id===pid);
+  let rows=[];
+  D.txns.filter(t=>t.pid===pid).forEach(t=>rows.push({...t}));
+  D.txns.filter(t=>t.accId===pid&&t.pid!==pid).forEach(t=>{
+    const op=D.parties.find(x=>x.id===t.pid);
+    rows.push({...t,_disp_desc:(t.desc||'—')+(op?' ['+op.name+']':'')});
+  });
+  const seen=new Set(); rows=rows.filter(r=>{if(seen.has(r.id))return false;seen.add(r.id);return true;});
+  rows.sort((a,b)=>b.date>a.date?1:-1);
+  if(!rows.length){el.innerHTML='<div class="empty"><span class="empty-ico">📄</span>Koi transaction nahi<br><small>+ ya − button se add karen</small></div>';return;}
+  let rb=p&&p.cat==='bank'?Number(p.obal||0):0;
+  const rbMap={};
+  [...rows].reverse().forEach(r=>{rb+=r.type==='recv'?r.amt:-r.amt;rbMap[r.id]=rb;});
+  el.innerHTML=rows.map(r=>{
+    const isR=r.type==='recv';
+    const lnk=D.parties.find(x=>x.id===r.accId);
+    const desc=r._disp_desc||r.desc||'—';
+    const meta=[r.date,lnk?'🔗 '+lnk.name:'',r.attach?'📎':''].filter(Boolean).join(' • ');
+    return`<div class="trow" onclick="openTxnMenu('${r.id}')">
+      <div class="tdot" style="background:${isR?'#f0fdf4':'#fef2f2'};color:${isR?'#16a34a':'#dc2626'}">${isR?'+':'−'}</div>
+      <div class="tmid"><div class="tdesc">${desc}</div><div class="tmeta">${meta}</div></div>
+      <div class="tamt"><div class="tamt-val" style="color:${isR?'#16a34a':'#dc2626'}">${isR?'+':'−'}${fmtN(r.amt)}</div><div class="tbal">Bal: ${fmtN(rbMap[r.id])}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function openEntry(type,editId){
+  _eType=type;
+  const isR=type==='recv';
+  const bar=document.getElementById('e-bar');
+  bar.style.background=isR?'#16a34a':'#dc2626';
+  document.getElementById('e-ttl').textContent=isR?'+ Received (Aaya)':'− Payment (Gaya)';
+  const btn=document.getElementById('e-save-btn');
+  btn.textContent=isR?'✚ Save Received':'✖ Save Payment';
+  btn.style.background=isR?'#16a34a':'#dc2626';
+  const p=D.parties.find(x=>x.id===_pty);
+  const color=p?CC[p.cat]:'#1a56db';
+  const bg=p?CB[p.cat]:'#eff6ff';
+  document.getElementById('e-pty-row').innerHTML=p?`
+    <div style="width:38px;height:38px;border-radius:50%;background:${bg};color:${color};font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">${p.photo?`<img src="${p.photo}" style="width:100%;height:100%;object-fit:cover">`:(ini(p.name))}</div>
+    <div><div style="font-size:14px;font-weight:600">${p.name}</div><div style="font-size:11px;color:#9ca3af">${CL[p.cat]||''} • ${isR?'Paise Aaye':'Paise Gaye'}</div></div>`:''
+  // Link dropdown — ALL other accounts, grouped by category
+  const lsel=document.getElementById('e-link-sel');
+  const others=D.parties.filter(x=>x.id!==_pty);
+  const grouped={};
+  others.forEach(x=>{ if(!grouped[x.cat]) grouped[x.cat]=[]; grouped[x.cat].push(x); });
+  let optsHtml='<option value="">-- Link Account (optional) --</option>';
+  ['bank','client','supplier','labor','project','other'].forEach(cat=>{
+    if(grouped[cat]&&grouped[cat].length){
+      optsHtml+=`<optgroup label="${CL[cat]}">`;
+      grouped[cat].forEach(x=>{ optsHtml+=`<option value="${x.id}">${x.name}</option>`; });
+      optsHtml+='</optgroup>';
+    }
+  });
+  lsel.innerHTML=optsHtml;
+  if(editId){
+    const t=D.txns.find(x=>x.id===editId);
+    if(t){
+      document.getElementById('e-amt').value=t.amt;
+      document.getElementById('e-desc').value=t.desc||'';
+      document.getElementById('e-date').value=t.date;
+      lsel.value=t.accId||'';
+      document.getElementById('e-file-lbl').textContent=t.attach?'📎 Bill attached ✓':'Koi file select nahi';
+      document.getElementById('e-edit-id').value=editId;
+    }
+  } else {
+    document.getElementById('e-amt').value='';
+    document.getElementById('e-desc').value='';
+    document.getElementById('e-date').value=td();
+    lsel.value='';
+    document.getElementById('e-file-lbl').textContent='Koi file select nahi';
+    document.getElementById('e-edit-id').value='';
+    const ec=document.getElementById('e-cam');if(ec)ec.value='';
+    const eg=document.getElementById('e-gal');if(eg)eg.value='';
+  }
+  document.getElementById('e-etype').value=type;
+  push('pg-entry');
+}
+function onFileChange(src){
+  const id=src==='cam'?'e-cam':'e-gal';
+  const f=document.getElementById(id).files[0];
+  if(f) document.getElementById('e-file-lbl').textContent='📎 '+f.name+' ✓';
+}
+
+// Compress image before saving (max 1000px wide, JPEG 70% quality) — keeps localStorage small
+function compressImage(file, cb){
+  if(!file.type.startsWith('image/')){
+    // not an image (e.g. PDF) — read as-is
+    const r=new FileReader();
+    r.onload=e=>cb(e.target.result);
+    r.onerror=()=>cb(null);
+    r.readAsDataURL(file);
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxW=1000;
+      let w=img.width, h=img.height;
+      if(w>maxW){ h=Math.round(h*(maxW/w)); w=maxW; }
+      const canvas=document.createElement('canvas');
+      canvas.width=w; canvas.height=h;
+      const ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      try{
+        const compressed=canvas.toDataURL('image/jpeg',0.7);
+        cb(compressed);
+      }catch(err){
+        cb(e.target.result); // fallback to original
+      }
+    };
+    img.onerror=()=>cb(e.target.result);
+    img.src=e.target.result;
+  };
+  reader.onerror=()=>cb(null);
+  reader.readAsDataURL(file);
+}
+function saveEntry(){
+  const amt=parseFloat(document.getElementById('e-amt').value);
+  if(!amt||amt<=0){alert('Raqam daalen');return;}
+  const type=document.getElementById('e-etype').value;
+  const desc=document.getElementById('e-desc').value.trim();
+  const date=document.getElementById('e-date').value||td();
+  const accId=document.getElementById('e-link-sel').value;
+  const editId=document.getElementById('e-edit-id').value;
+  const doSave=attach=>{
+    const obj={pid:_pty,type,amt,desc,date,accId,attach};
+    if(editId){const i=D.txns.findIndex(x=>x.id===editId);if(i>-1)D.txns[i]={...D.txns[i],...obj};}
+    else D.txns.unshift({id:uid(),...obj});
+    sv(); goBack(); renderTxns(_pty); renderStrip(_pty); renderList();
+  };
+  const fCam=document.getElementById('e-cam').files[0];
+  const fGal=document.getElementById('e-gal').files[0];
+  const f=fCam||fGal;
+  if(f&&!editId){
+    compressImage(f, dataUrl=>{
+      if(!dataUrl){alert('Bill attach nahi ho saka, dobara try karen');doSave(null);return;}
+      doSave(dataUrl);
+    });
+  }
+  else doSave(editId?(D.txns.find(x=>x.id===editId)||{}).attach:null);
+}
+
+function openTxnMenu(id){
+  _txn=id;
+  const t=D.txns.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('m-txn-ttl').textContent=(t.type==='recv'?'+ ':'− ')+fmtN(t.amt)+(t.desc?' — '+t.desc:'');
+  document.getElementById('m-bill-btn').style.display=t.attach?'':'none';
+  openM('m-txn');
+}
+function editTxn(){closeM('m-txn');const t=D.txns.find(x=>x.id===_txn);if(t)openEntry(t.type,t.id);}
+function viewBill(){
+  closeM('m-txn');
+  const t=D.txns.find(x=>x.id===_txn);
+  if(!t||!t.attach){alert('Koi bill attach nahi hai');return;}
+  showBillViewer(t.attach,'bill');
+}
+function showBillViewer(dataUrl, filename){
+  if(!dataUrl){alert('Attachment nahi mila');return;}
+  const isPdf=dataUrl.startsWith('data:application/pdf');
+  const imgEl=document.getElementById('bv-img');
+  const pdfEl=document.getElementById('bv-pdf');
+  const dlEl=document.getElementById('bv-download');
+  if(isPdf){
+    imgEl.style.display='none';
+    pdfEl.style.display='block';
+    pdfEl.src=dataUrl;
+    dlEl.href=dataUrl;
+    dlEl.download=filename+'.pdf';
+  } else {
+    pdfEl.style.display='none';
+    pdfEl.src='';
+    imgEl.style.display='block';
+    imgEl.src=dataUrl;
+    dlEl.href=dataUrl;
+    dlEl.download=filename+'.jpg';
+  }
+  document.getElementById('bill-viewer').style.display='flex';
+}
+function closeBillViewer(){
+  document.getElementById('bill-viewer').style.display='none';
+  document.getElementById('bv-pdf').src='';
+  document.getElementById('bv-img').src='';
+}
+function waTxn(){
+  closeM('m-txn');
+  const t=D.txns.find(x=>x.id===_txn);if(!t)return;
+  const p=D.parties.find(x=>x.id===t.pid)||D.parties.find(x=>x.id===_pty);
+  if(!p||!p.phone){alert('Phone number nahi hai');return;}
+  const biz=D.prof;
+  const msg=`*${biz.biz||'ContractorKhata'}*\n${t.type==='recv'?'✅ Received':'💸 Payment'}: *${fmt(t.amt)}*\nDetail: ${t.desc||'—'}\nDate: ${t.date}\n${biz.owner?'— '+biz.owner:''}`;
+  window.open(`https://wa.me/${p.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function delTxn(){
+  closeM('m-txn');
+  const t=D.txns.find(x=>x.id===_txn);
+  const amtStr=t?fmt(t.amt):'';
+  const descStr=t&&t.desc?(' — '+t.desc):'';
+  askConfirm('Yeh transaction'+(amtStr?' ('+amtStr+descStr+')':'')+' delete ho jayega. Yeh wapas nahi ho sakta.', function(){
+    D.txns=D.txns.filter(x=>x.id!==_txn);
+    sv(); renderTxns(_pty); renderStrip(_pty); renderList();
+  }, 'Transaction Delete Karen?');
+}
+
+function openPartyMenu(){
+  const p=D.parties.find(x=>x.id===_pty);
+  document.getElementById('m-pty-ttl').textContent=p?p.name:'Options';
+  openM('m-pty');
+}
+function editPty(){closeM('m-pty');openAddParty(_pty);}
+function waPty(){
+  closeM('m-pty');
+  const p=D.parties.find(x=>x.id===_pty);
+  if(!p||!p.phone){alert('Phone number nahi hai');return;}
+  const b=bal(_pty);const biz=D.prof;
+  const msg=`*${biz.biz||'ContractorKhata'}*\nAccount: *${p.name}*\nBalance: *${fmt(Math.abs(b.n))}* (${b.n>=0?'Milna':'Dena'})\n${biz.owner?'— '+biz.owner:''}`;
+  window.open(`https://wa.me/${p.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function openRptDateModal(){
+  closeM('m-pty');
+  document.getElementById('rd-from').value='';
+  document.getElementById('rd-to').value=td();
+  openM('m-rptdate');
+}
+
+// Download report as HTML file (same pattern as Excel download) — works on all browsers
+// Open the file in browser to view/print/save-as-PDF
+// Reusable in-app confirm modal — replaces native confirm() which can be blocked/unreliable on mobile
+let _confirmCallback=null;
+function askConfirm(message, onYes, title){
+  document.getElementById('mc-title').textContent=title||'Delete Karen?';
+  document.getElementById('mc-msg').textContent=message;
+  _confirmCallback=onYes;
+  const btn=document.getElementById('mc-confirm-btn');
+  btn.onclick=function(){
+    closeM('m-confirm');
+    if(_confirmCallback) _confirmCallback();
+    _confirmCallback=null;
+  };
+  openM('m-confirm');
+}
+function openHtmlReport(htmlContent, filename){
+  const blob=new Blob([htmlContent],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=(filename||'report')+'.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  alert('📥 Report download ho gayi!\n\nFile kholen → "Print/PDF" button se PDF banayen ya save karen.');
+}
+
+function _getRptData(){
+  const p=D.parties.find(x=>x.id===_pty);if(!p)return null;
+  const from=document.getElementById('rd-from').value;
+  const to=document.getElementById('rd-to').value;
+  const b=bal(_pty);const biz=D.prof;
+  let txns=D.txns.filter(t=>t.pid===p.id);
+  if(from) txns=txns.filter(t=>t.date>=from);
+  if(to) txns=txns.filter(t=>t.date<=to);
+  txns.sort((a,b)=>a.date>b.date?1:-1);
+  return {p,from,to,b,biz,txns};
+}
+function rptPtyPdf(){
+  const d=_getRptData();if(!d)return;
+  const {p,b,biz,txns}=d;
+  let rb=p.cat==='bank'?Number(p.obal||0):0;
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:24px;max-width:700px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}th{background:#f3f4f6;padding:8px;border:1px solid #e5e7eb;text-align:left}td{padding:8px;border:1px solid #e5e7eb}.g{color:#16a34a;font-weight:600}.r{color:#dc2626;font-weight:600}@media print{button{display:none}}</style></head><body>
+  <h2>${biz.biz||'ContractorKhata'}</h2><p style="color:#6b7280;font-size:13px">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
+  <h3>${p.name} (${CL[p.cat]||p.cat})</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:12px 0">
+    <div style="background:#f0fdf4;border-radius:8px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#16a34a">Rs ${fmtN(b.r)}</div><div style="font-size:11px;color:#6b7280">Total In</div></div>
+    <div style="background:#fef2f2;border-radius:8px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#dc2626">Rs ${fmtN(b.p)}</div><div style="font-size:11px;color:#6b7280">Total Out</div></div>
+    <div style="background:#eff6ff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#1a56db">Rs ${fmtN(Math.abs(b.n))}</div><div style="font-size:11px;color:#6b7280">Balance</div></div>
+  </div>
+  <table><thead><tr><th>Date</th><th>Detail</th><th>Link Account</th><th>In (+)</th><th>Out (−)</th><th>Balance</th></tr></thead><tbody>
+  ${txns.map(t=>{rb+=t.type==='recv'?t.amt:-t.amt;const lnk=D.parties.find(x=>x.id===t.accId);return`<tr><td>${t.date}</td><td>${t.desc||'—'}</td><td>${lnk?lnk.name:'—'}</td><td class="g">${t.type==='recv'?'Rs '+fmtN(t.amt):''}</td><td class="r">${t.type==='pay'?'Rs '+fmtN(t.amt):''}</td><td>Rs ${fmtN(rb)}</td></tr>`;}).join('')||'<tr><td colspan="6" style="text-align:center;color:#9ca3af">Koi data nahi</td></tr>'}
+  </tbody></table>
+  <button onclick="window.print()" style="margin-top:16px;padding:10px 24px;background:#1a56db;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">🖨️ Print / PDF</button>
+  </body></html>`;
+  closeM('m-rptdate');
+  openHtmlReport(html, `${p.name.replace(/[^a-zA-Z0-9]/g,'_')}_Report_${td()}`);
+}
+function rptPtyExcel(){
+  const d=_getRptData();if(!d)return;
+  const {p,b,txns}=d;
+  if(typeof XLSX==='undefined'){alert('Internet check karen — Excel library load nahi hui');return;}
+  const wb=XLSX.utils.book_new();
+  let rb2=p.cat==='bank'?Number(p.obal||0):0;
+  const rows=txns.map(t=>{rb2+=t.type==='recv'?t.amt:-t.amt;const lnk=D.parties.find(x=>x.id===t.accId);return{Date:t.date,Detail:t.desc||'—',Link_Account:lnk?lnk.name:'',Received:t.type==='recv'?t.amt:'',Paid:t.type==='pay'?t.amt:'',Balance:rb2};});
+  rows.unshift({Date:'',Detail:'TOTAL IN',Link_Account:'',Received:b.r,Paid:'',Balance:''});
+  rows.splice(1,0,{Date:'',Detail:'TOTAL OUT',Link_Account:'',Received:'',Paid:b.p,Balance:''});
+  rows.splice(2,0,{Date:'',Detail:'BALANCE',Link_Account:'',Received:'',Paid:'',Balance:b.n});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Ledger');
+  closeM('m-rptdate');
+  XLSX.writeFile(wb,`${p.name.replace(/[^a-zA-Z0-9]/g,'_')}_Report_${td()}.xlsx`);
+}
+function delPty(){
+  closeM('m-pty');
+  const p=D.parties.find(x=>x.id===_pty);
+  const naam=p?p.name:'Yeh account';
+  askConfirm(naam+' aur iski SAB transactions/salary records hamesha ke liye delete ho jayengi. Yeh wapas nahi ho sakta.', function(){
+    D.txns=D.txns.filter(t=>t.pid!==_pty);
+    if(p&&p.cat==='labor'){D.salary=D.salary.filter(s=>s.lid!==_pty);D.advances=D.advances.filter(a=>a.lid!==_pty);}
+    D.parties=D.parties.filter(x=>x.id!==_pty);
+    _pty=null; sv(); _hist=[]; goto('pg-home');
+  }, 'Account Delete Karen?');
+}
+
+let _apCat='client';
+function openAddParty(editId){
+  _apCat='client';
+  document.querySelectorAll('.csel').forEach(b=>b.classList.remove('on'));
+  document.getElementById('ap-lab-flds').style.display='none';
+  document.getElementById('ap-bank-flds').style.display='none';
+  const av=document.getElementById('ap-av');
+  av.innerHTML='<span style="font-size:28px">📷</span><span style="font-size:11px;color:#9ca3af;margin-top:4px">Photo</span>';
+  av.dataset.photo='';
+  ['ap-name','ap-phone','ap-addr','ap-note','ap-rate','ap-ot','ap-alw','ap-cnic','ap-anum'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('ap-obal').value='0';
+  document.getElementById('ap-join').value=td();
+  document.getElementById('ap-id').value='';
+  document.getElementById('ap-ttl').textContent='New Account';
+  if(editId){
+    const p=D.parties.find(x=>x.id===editId);if(!p)return;
+    document.getElementById('ap-ttl').textContent='Edit: '+p.name;
+    document.getElementById('ap-id').value=p.id;
+    const btn=document.querySelector(`.csel[data-c="${p.cat}"]`);
+    selCat(btn,p.cat);
+    document.getElementById('ap-name').value=p.name||'';
+    document.getElementById('ap-phone').value=p.phone||'';
+    document.getElementById('ap-addr').value=p.addr||'';
+    document.getElementById('ap-note').value=p.note||'';
+    if(p.cat==='labor'){document.getElementById('ap-rate').value=p.rate||'';document.getElementById('ap-ot').value=p.otr||'';document.getElementById('ap-alw').value=p.alw||'';document.getElementById('ap-join').value=p.joinDate||'';document.getElementById('ap-cnic').value=p.cnic||'';}
+    if(p.cat==='bank'){document.getElementById('ap-btype').value=p.btype||'bank';document.getElementById('ap-obal').value=p.obal||0;document.getElementById('ap-anum').value=p.anum||'';}
+    if(p.photo){av.innerHTML='';const img=document.createElement('img');img.src=p.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';av.appendChild(img);av.dataset.photo=p.photo;}
+  }
+  push('pg-aparty');
+}
+function selCat(el,catOverride){
+  const cat=catOverride||(el?el.dataset.c:'client');
+  _apCat=cat;
+  document.querySelectorAll('.csel').forEach(b=>b.classList.remove('on'));
+  const btn=el||document.querySelector(`.csel[data-c="${cat}"]`);
+  if(btn) btn.classList.add('on');
+  document.getElementById('ap-lab-flds').style.display=cat==='labor'?'':'none';
+  document.getElementById('ap-bank-flds').style.display=cat==='bank'?'':'none';
+}
+function autoOT(){
+  const r=parseFloat(document.getElementById('ap-rate').value)||0;
+  const oel=document.getElementById('ap-ot');
+  if(r>0&&(!oel.value||oel.dataset.auto==='1')){oel.value=Math.round(r/8);oel.dataset.auto='1';}
+}
+function apPhotoLoad(src){
+  const id=src==='cam'?'ap-cam':src==='gal'?'ap-gal':'ap-ph';
+  const f=document.getElementById(id).files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{
+    const av=document.getElementById('ap-av');
+    av.innerHTML='';
+    const img=document.createElement('img');
+    img.src=e.target.result;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';
+    av.appendChild(img);
+    av.dataset.photo=e.target.result;
+  };r.readAsDataURL(f);
+}
+function saveParty(){
+  const name=document.getElementById('ap-name').value.trim();
+  if(!name){alert('Naam zaroori hai');return;}
+  if(_apCat==='labor'&&!document.getElementById('ap-rate').value){alert('Daily rate daalen');return;}
+  const av=document.getElementById('ap-av');
+  const editId=document.getElementById('ap-id').value;
+  const photo=av.dataset.photo||(editId?(D.parties.find(x=>x.id===editId)||{}).photo:null);
+  const obj={cat:_apCat,name,phone:document.getElementById('ap-phone').value.trim(),addr:document.getElementById('ap-addr').value.trim(),note:document.getElementById('ap-note').value.trim(),photo};
+  if(_apCat==='labor'){obj.rate=parseFloat(document.getElementById('ap-rate').value)||0;obj.otr=parseFloat(document.getElementById('ap-ot').value)||0;obj.alw=parseFloat(document.getElementById('ap-alw').value)||0;obj.joinDate=document.getElementById('ap-join').value;obj.cnic=document.getElementById('ap-cnic').value.trim();}
+  if(_apCat==='bank'){obj.btype=document.getElementById('ap-btype').value;obj.obal=parseFloat(document.getElementById('ap-obal').value)||0;obj.anum=document.getElementById('ap-anum').value.trim();}
+  if(editId){const i=D.parties.findIndex(x=>x.id===editId);if(i>-1)D.parties[i]={...D.parties[i],...obj};}
+  else D.parties.push({id:uid(),...obj});
+  sv(); goBack(); renderList();
+}
+
+let _SC=null;
+function resetSalaryCalc(){
+  _SC=null;
+  _editingSalId=null;
+  const saveBtnReset=document.querySelector('#sl-result button.sbtn.blue');
+  if(saveBtnReset) saveBtnReset.textContent='💾 Save Salary Record';
+  const labSel=document.getElementById('sl-lab'); if(labSel) labSel.value='';
+  const card=document.getElementById('sl-lab-card'); if(card) card.style.display='none';
+  const daysEl=document.getElementById('sl-days'); if(daysEl) daysEl.value='';
+  const otEl=document.getElementById('sl-ot'); if(otEl) otEl.value='';
+  const projEl=document.getElementById('sl-proj'); if(projEl) projEl.value='';
+  const resEl=document.getElementById('sl-result'); if(resEl) resEl.style.display='none';
+  const monEl=document.getElementById('sl-mon'); if(monEl) monEl.value=new Date().getMonth();
+  const yrEl=document.getElementById('sl-yr'); if(yrEl) yrEl.value=new Date().getFullYear();
+}
+function toggleSalCalc(){
+  const wrap=document.getElementById('sl-calc-wrap');
+  const isOpen=wrap.style.display!=='none';
+  if(isOpen){
+    wrap.style.display='none';
+    document.getElementById('sl-calc-toggle-btn').textContent='+';
+    document.getElementById('sl-new-btn').textContent='➕ Nayi Salary Banayen';
+    _editingSalId=null; // cancel any in-progress edit
+    const sb=document.querySelector('#sl-result button.sbtn.blue');
+    if(sb) sb.textContent='💾 Save Salary Record';
+  } else {
+    resetSalaryCalc();
+    wrap.style.display='';
+    document.getElementById('sl-calc-toggle-btn').textContent='×';
+    document.getElementById('sl-new-btn').textContent='✖ Calculator Band Karen';
+    wrap.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+function fillSalHistLabDrop(){
+  const sel=document.getElementById('slh-lab');if(!sel)return;
+  const labs=D.parties.filter(p=>p.cat==='labor');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- Sab Labor --</option>'+labs.map(l=>`<option value="${l.id}">${l.name}</option>`).join('');
+  if(cur&&labs.find(x=>x.id===cur)) sel.value=cur;
+
+  // Year dropdown — built from actual salary records
+  const yrSel=document.getElementById('slh-yr');
+  if(yrSel){
+    const curYr=yrSel.value;
+    const years=[...new Set(D.salary.map(s=>s.yr))].sort((a,b)=>b-a);
+    yrSel.innerHTML='<option value="">-- Sab Saal --</option>'+years.map(y=>`<option value="${y}">${y}</option>`).join('');
+    if(curYr&&years.includes(parseInt(curYr))) yrSel.value=curYr;
+  }
+
+  // Project dropdown
+  const projSel=document.getElementById('slh-proj');
+  if(projSel){
+    const curProj=projSel.value;
+    const projs=D.parties.filter(p=>p.cat==='project');
+    projSel.innerHTML='<option value="">-- Sab Project --</option>'+projs.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    if(curProj&&projs.find(x=>x.id===curProj)) projSel.value=curProj;
+  }
+}
+function fillSalDrops(){
+  const labs=D.parties.filter(p=>p.cat==='labor');
+  const projs=D.parties.filter(p=>p.cat==='project');
+  const ls=document.getElementById('sl-lab');
+  const cur=ls.value;
+  ls.innerHTML='<option value="">-- Labor choose karen --</option>'+labs.map(l=>`<option value="${l.id}">${l.name}</option>`).join('');
+  if(cur&&labs.find(x=>x.id===cur)) ls.value=cur;
+  const ps=document.getElementById('sl-proj');
+  const curp=ps.value;
+  ps.innerHTML='<option value="">-- Koi project nahi --</option>'+projs.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  if(curp&&projs.find(x=>x.id===curp)) ps.value=curp;
+}
+function onLabChange(){
+  const id=document.getElementById('sl-lab').value;
+  const l=D.parties.find(x=>x.id===id);
+  const card=document.getElementById('sl-lab-card');
+  if(!l){card.style.display='none';_SC=null;document.getElementById('sl-result').style.display='none';return;}
+  const lav=document.getElementById('sl-lav');
+  if(l.photo){lav.innerHTML='';const img=document.createElement('img');img.src=l.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';lav.appendChild(img);}
+  else lav.textContent=ini(l.name);
+  document.getElementById('sl-lname').textContent=l.name;
+  document.getElementById('sl-lrate').textContent=`Rs ${(l.rate||0).toLocaleString()}/din | OT: Rs ${(l.otr||0).toLocaleString()}/hr | Alw: Rs ${(l.alw||0).toLocaleString()}/din`;
+  card.style.display='';
+  calcSal();
+}
+function calcSal(){
+  const lid=document.getElementById('sl-lab').value;if(!lid){document.getElementById('sl-result').style.display='none';return;}
+  const l=D.parties.find(x=>x.id===lid);if(!l)return;
+  const days=parseFloat(document.getElementById('sl-days').value)||0;
+  const ot=parseFloat(document.getElementById('sl-ot').value)||0;
+  const mon=parseInt(document.getElementById('sl-mon').value);
+  const yr=parseInt(document.getElementById('sl-yr').value);
+  const projId=document.getElementById('sl-proj').value;
+  const projName=projId?(D.parties.find(x=>x.id===projId)||{}).name||'':'';
+  const rate=l.rate||0,otr=l.otr||0,alwPD=l.alw||0;
+  const basic=days*rate,otAmt=ot*otr,alwAmt=days*alwPD;
+  const gross=basic+otAmt+alwAmt;
+  const pendAdv=D.advances.filter(a=>a.lid===lid&&!a.ded).reduce((s,a)=>s+a.amt,0);
+  const net=Math.max(0,gross-pendAdv);
+  _SC={lid,lname:l.name,lphone:l.phone||'',mon,yr,days,ot,rate,otr,alwPD,basic,otAmt,alwAmt,gross,advDeduct:pendAdv,net,projId,projName};
+  document.getElementById('sl-wa-btn').style.display=l.phone?'':'none';
+  document.getElementById('sl-breakdown').innerHTML=`
+    <div style="font-size:15px;font-weight:700;margin-bottom:12px;color:#1a56db">${l.name} — ${MN[mon]} ${yr}</div>
+    ${projName?`<div style="font-size:12px;background:#eff6ff;border-radius:6px;padding:5px 10px;margin-bottom:10px;color:#1e429f">🏗️ ${projName}</div>`:''}
+    <div class="sal-row"><span>Daily Rate</span><span style="color:#6b7280">${fmt(rate)}</span></div>
+    <div class="sal-row"><span>Haazri: ${days} din × ${fmt(rate)}</span><span><b>${fmt(basic)}</b></span></div>
+    ${alwAmt>0?`<div class="sal-row"><span>Allowance: ${days} × ${fmt(alwPD)}</span><span>${fmt(alwAmt)}</span></div>`:''}
+    ${otAmt>0?`<div class="sal-row"><span>Overtime: ${ot}hrs × ${fmt(otr)}</span><span>${fmt(otAmt)}</span></div>`:''}
+    <div class="sal-row" style="font-weight:600;border-top:2px solid #e5e7eb;margin-top:4px;padding-top:10px"><span>Gross</span><span>${fmt(gross)}</span></div>
+    ${pendAdv>0?`<div class="sal-row" style="color:#dc2626"><span>⚠ Advance Deduction</span><span>− ${fmt(pendAdv)}</span></div>`:''}
+    <div style="background:#f0fdf4;border-radius:10px;padding:12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:15px;font-weight:700;color:#166534">💰 NET SALARY</span>
+      <span style="font-size:22px;font-weight:700;color:#16a34a;font-family:monospace">${fmt(net)}</span>
+    </div>`;
+  document.getElementById('sl-result').style.display='';
+}
+function saveSalary(){
+  if(!_SC){alert('Calculate karen pehle');return;}
+  const sc={..._SC};
+  const isEdit=!!_editingSalId;
+  const paidDate=isEdit?(D.salary.find(x=>x.id===_editingSalId)||{}).paidDate||td():td();
+
+  // If editing: remove old record + its linked txns FIRST (now that we have a guaranteed new save)
+  if(isEdit){
+    _doDelSal(_editingSalId, true); // true = skip re-render, we'll re-render after new save
+  }
+
+  D.salary.unshift({id:uid(),...sc,paid:true,paidDate});
+  D.txns.unshift({id:uid(),pid:sc.lid,type:'recv',amt:sc.net,desc:`Salary ${MN[sc.mon]} ${sc.yr}${sc.projName?' — '+sc.projName:''}`,date:paidDate,accId:'',projId:sc.projId||''});
+  if(sc.projId){
+    D.txns.unshift({id:uid(),pid:sc.projId,type:'pay',amt:sc.net,desc:`Salary: ${sc.lname} (${MN[sc.mon]} ${sc.yr})`,date:paidDate,accId:'',projId:''});
+  }
+  if(sc.advDeduct>0){let rem=sc.advDeduct;D.advances.filter(a=>a.lid===sc.lid&&!a.ded).forEach(a=>{if(rem>0){a.ded=true;rem-=a.amt;}});}
+  sv();_SC=null;_editingSalId=null;
+  document.getElementById('sl-result').style.display='none';
+  document.getElementById('sl-days').value='';
+  document.getElementById('sl-ot').value='';
+  document.getElementById('sl-lab').value='';
+  document.getElementById('sl-lab-card').style.display='none';
+  const saveBtn=document.querySelector('#sl-result button.sbtn.blue');
+  if(saveBtn) saveBtn.textContent='💾 Save Salary Record';
+  toggleSalCalc(); // close calculator
+  renderSalHist();renderList();
+  alert(isEdit?'✅ Salary update ho gayi!':'✅ Salary saved!\n\nLabor account mein +Received record hua.\n\nBank se payment ke liye:\nBank account → −Payment karen.');
+}
+function printSlipPdf(){
+  if(!_SC)return;
+  const biz=D.prof;
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:24px;max-width:580px;margin:0 auto}h2{color:#1a56db}table{width:100%;border-collapse:collapse;margin:12px 0}td{padding:9px;border:1px solid #e5e7eb;font-size:14px}.net{background:#f0fdf4;padding:14px;border-radius:8px;margin-top:14px;display:flex;justify-content:space-between;align-items:center}@media print{button{display:none}}</style></head><body>
+  <h2>${biz.biz||'Salary Slip'}</h2><p style="color:#6b7280;font-size:13px">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
+  <table><tr><td><b>Employee</b></td><td>${_SC.lname}</td><td><b>Month</b></td><td>${MN[_SC.mon]} ${_SC.yr}</td></tr>
+  <tr><td><b>Days</b></td><td>${_SC.days}</td><td><b>Daily Rate</b></td><td>${fmt(_SC.rate)}</td></tr>
+  <tr><td><b>Basic Pay</b></td><td colspan="3">${fmt(_SC.basic)}</td></tr>
+  ${_SC.alwAmt>0?`<tr><td><b>Daily Allowance</b></td><td>${_SC.days}days × ${fmt(_SC.alwPD||0)}</td><td colspan="2">${fmt(_SC.alwAmt)}</td></tr>`:''}
+  ${_SC.otAmt>0?`<tr><td><b>Overtime</b></td><td>${_SC.ot}hrs × ${fmt(_SC.otr)}</td><td colspan="2">${fmt(_SC.otAmt)}</td></tr>`:''}
+  ${_SC.advDeduct>0?`<tr><td><b>Advance</b></td><td colspan="3" style="color:red">− ${fmt(_SC.advDeduct)}</td></tr>`:''}
+  ${_SC.projName?`<tr><td><b>Project</b></td><td colspan="3">${_SC.projName}</td></tr>`:''}
+  </table>
+  <div class="net"><span style="font-size:16px;font-weight:600">Net Salary</span><span style="font-size:24px;font-weight:700;color:#16a34a;font-family:monospace">${fmt(_SC.net)}</span></div>
+  <button onclick="window.print()" style="margin-top:16px;padding:10px 24px;background:#1a56db;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨️ Print</button>
+  </body></html>`;
+  openHtmlReport(html, `Salary_${_SC.lname.replace(/[^a-zA-Z0-9]/g,'_')}_${MN[_SC.mon]}_${_SC.yr}`);
+}
+function printSlipExcel(){
+  if(!_SC)return;
+  if(typeof XLSX==='undefined'){alert('Internet check karen — Excel library load nahi hui');return;}
+  const wb=XLSX.utils.book_new();
+  const rows=[{
+    Employee:_SC.lname, Month:MN[_SC.mon], Year:_SC.yr, Days:_SC.days,
+    Daily_Rate:_SC.rate, Basic_Pay:_SC.basic,
+    Daily_Allowance_Rate:_SC.alwPD||0, Allowance_Total:_SC.alwAmt||0,
+    OT_Rate:_SC.otr||0, OT_Hours:_SC.ot||0, OT_Amount:_SC.otAmt||0,
+    Gross_Salary:_SC.gross, Advance_Deduction:_SC.advDeduct||0,
+    Net_Salary:_SC.net, Project:_SC.projName||''
+  }];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Salary Slip');
+  XLSX.writeFile(wb,`Salary_${_SC.lname.replace(/[^a-zA-Z0-9]/g,'_')}_${MN[_SC.mon]}_${_SC.yr}.xlsx`);
+}
+function salWA(){
+  if(!_SC||!_SC.lphone)return;
+  const biz=D.prof;
+  const msg=`*${biz.biz||'Salary'}*\n${_SC.lname} — ${MN[_SC.mon]} ${_SC.yr}\nDin: ${_SC.days}${_SC.alwAmt>0?'\nAlw: '+fmt(_SC.alwAmt):''}${_SC.otAmt>0?'\nOT: '+fmt(_SC.otAmt):''}${_SC.advDeduct>0?'\nAdv: −'+fmt(_SC.advDeduct):''}\n*Net: ${fmt(_SC.net)}*${_SC.projName?'\n'+_SC.projName:''}\n${biz.owner?'— '+biz.owner:''}`;
+  window.open(`https://wa.me/${_SC.lphone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function _filteredSalHist(){
+  const labEl=document.getElementById('slh-lab');
+  const monEl=document.getElementById('slh-mon');
+  const yrEl=document.getElementById('slh-yr');
+  const projEl=document.getElementById('slh-proj');
+  const labId=labEl?labEl.value:'';
+  const mon=monEl&&monEl.value!==''?parseInt(monEl.value):'';
+  const yr=yrEl&&yrEl.value!==''?parseInt(yrEl.value):'';
+  const projId=projEl?projEl.value:'';
+  let sals=D.salary;
+  if(labId) sals=sals.filter(s=>s.lid===labId);
+  if(mon!=='') sals=sals.filter(s=>s.mon===mon);
+  if(yr!=='') sals=sals.filter(s=>s.yr===yr);
+  if(projId) sals=sals.filter(s=>s.projId===projId);
+  return [...sals].sort((a,b)=>b.yr!==a.yr?b.yr-a.yr:b.mon-a.mon);
+}
+function renderSalHist(){
+  const el=document.getElementById('sl-hist');if(!el)return;
+  const sals=_filteredSalHist();
+  const lbl=document.getElementById('sl-hist-lbl');
+  if(lbl) lbl.textContent=`Salary History${sals.length?' ('+sals.length+')':''}`;
+  if(!sals.length){el.innerHTML='<div class="empty"><span class="empty-ico">📋</span>Is filter mein koi salary nahi</div>';return;}
+  el.innerHTML=sals.map(s=>{
+    const l=D.parties.find(x=>x.id===s.lid);
+    const proj=D.parties.find(x=>x.id===s.projId);
+    return`<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+            <div style="width:28px;height:28px;border-radius:50%;background:${l?'#eff6ff':'#f3f4f6'};color:#1e429f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden">${l&&l.photo?`<img src="${l.photo}" style="width:100%;height:100%;object-fit:cover">`:(l?ini(l.name):'?')}</div>
+            <div style="font-size:13px;font-weight:600">${l?l.name:'?'} <span style="font-size:10px;background:#f0fdf4;color:#166534;padding:2px 7px;border-radius:20px">Saved</span></div>
+          </div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:3px">${MN[s.mon]} ${s.yr} • ${s.days} din${proj?' • '+proj.name:''}</div>
+        <div style="font-size:11px;color:#9ca3af">Basic: ${fmt(s.basic||0)}${s.alwAmt>0?' | Alw: '+fmt(s.alwAmt):''}${s.otAmt>0?' | OT: '+fmt(s.otAmt):''}${s.advDeduct>0?' | Adv: −'+fmt(s.advDeduct):''}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:16px;font-weight:700;color:#16a34a;font-family:monospace">${fmt(s.net)}</div>
+        <div style="display:flex;gap:4px;margin-top:6px">
+          <button onclick="editSal('${s.id}')" style="padding:4px 9px;border:1px solid #1a56db;border-radius:6px;background:#eff6ff;color:#1e429f;font-size:11px;cursor:pointer">✏️ Edit</button>
+          <button onclick="delSal('${s.id}')" style="padding:4px 9px;border:1px solid #fca5a5;border-radius:6px;background:#fef2f2;color:#dc2626;font-size:11px;cursor:pointer">🗑️ Del</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function salHistPdf(){
+  const sals=_filteredSalHist();
+  if(!sals.length){alert('Is filter mein koi salary nahi');return;}
+  const biz=D.prof;
+  const labEl=document.getElementById('slh-lab');
+  const labName=labEl&&labEl.value?(D.parties.find(x=>x.id===labEl.value)||{}).name:'Sab Labor';
+  const monEl=document.getElementById('slh-mon');
+  const yrEl=document.getElementById('slh-yr');
+  const projEl=document.getElementById('slh-proj');
+  const monName=monEl&&monEl.value!==''?MN[parseInt(monEl.value)]:'';
+  const yrName=yrEl&&yrEl.value!==''?yrEl.value:'';
+  const projName=projEl&&projEl.value?(D.parties.find(x=>x.id===projEl.value)||{}).name:'';
+  const totalNet=sals.reduce((s,x)=>s+x.net,0);
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:24px;max-width:760px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}th{background:#f3f4f6;padding:7px;border:1px solid #e5e7eb;text-align:left}td{padding:7px;border:1px solid #e5e7eb}.tot{font-weight:700;background:#f0fdf4}@media print{button{display:none}}</style></head><body>
+  <h2>${biz.biz||'ContractorKhata'} — Salary History</h2>
+  <p style="color:#6b7280;font-size:13px">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
+  <p style="font-size:13px"><b>Labor:</b> ${labName}${monName?' | <b>Mahina:</b> '+monName:''}${yrName?' | <b>Saal:</b> '+yrName:''}${projName?' | <b>Project:</b> '+projName:''}</p>
+  <table><thead><tr><th>Labor</th><th>Month</th><th>Days</th><th>Basic</th><th>Allowance</th><th>OT</th><th>Advance</th><th>Net</th><th>Paid Date</th></tr></thead><tbody>
+  ${sals.map(s=>{const l=D.parties.find(x=>x.id===s.lid);return`<tr><td>${l?l.name:'?'}</td><td>${MN[s.mon]} ${s.yr}</td><td>${s.days}</td><td>${fmtN(s.basic||0)}</td><td>${fmtN(s.alwAmt||0)}</td><td>${fmtN(s.otAmt||0)}</td><td>${fmtN(s.advDeduct||0)}</td><td>${fmtN(s.net)}</td><td>${s.paidDate}</td></tr>`;}).join('')}
+  <tr class="tot"><td colspan="7">TOTAL</td><td>${fmtN(totalNet)}</td><td></td></tr>
+  </tbody></table>
+  <button onclick="window.print()" style="margin-top:16px;padding:10px 24px;background:#1a56db;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨️ Print / PDF</button>
+  </body></html>`;
+  openHtmlReport(html, `Salary_History_${td()}`);
+}
+function salHistExcel(){
+  const sals=_filteredSalHist();
+  if(!sals.length){alert('Is filter mein koi salary nahi');return;}
+  if(typeof XLSX==='undefined'){alert('Internet check karen');return;}
+  const wb=XLSX.utils.book_new();
+  const rows=sals.map(s=>{
+    const l=D.parties.find(x=>x.id===s.lid);
+    const proj=D.parties.find(x=>x.id===s.projId);
+    return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,Daily_Rate:s.rate,Basic:s.basic||0,Daily_Allowance_Rate:s.alwPD||0,Allowance_Total:s.alwAmt||0,OT_Rate:s.otr||0,OT_Hours:s.ot||0,OT_Amount:s.otAmt||0,Gross:s.gross,Advance_Deduction:s.advDeduct||0,Net:s.net,Paid_Date:s.paidDate,Project:proj?proj.name:''};
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Salary History');
+  XLSX.writeFile(wb,`Salary_History_${td()}.xlsx`);
+}
+let _editingSalId=null; // tracks which salary record we're currently editing (null = creating new)
+function editSal(id){
+  const s=D.salary.find(x=>x.id===id);if(!s)return;
+  _editingSalId=id; // remember — do NOT delete yet, only delete+replace on actual Save
+  // Open the calculator if it's collapsed
+  const wrap=document.getElementById('sl-calc-wrap');
+  if(wrap.style.display==='none') toggleSalCalc();
+  fillSalDrops();
+  const ls=document.getElementById('sl-lab');if(ls){ls.value=s.lid;onLabChange();}
+  const ms=document.getElementById('sl-mon');if(ms)ms.value=s.mon;
+  const ys=document.getElementById('sl-yr');if(ys)ys.value=s.yr;
+  const ds=document.getElementById('sl-days');if(ds)ds.value=s.days;
+  const os=document.getElementById('sl-ot');if(os)os.value=s.ot||'';
+  const ps=document.getElementById('sl-proj');if(ps&&s.projId)ps.value=s.projId;
+  calcSal();
+  // Update Save button to reflect edit mode
+  const saveBtn=document.querySelector('#sl-result button.sbtn.blue');
+  if(saveBtn) saveBtn.textContent='💾 Update Salary Record';
+  document.getElementById('sl-calc-wrap').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function _doDelSal(id, skipRender){
+  const s=D.salary.find(x=>x.id===id);
+  if(s){
+    D.txns=D.txns.filter(t=>!(t.pid===s.lid&&t.type==='recv'&&t.amt===s.net&&t.date===s.paidDate));
+    if(s.projId) D.txns=D.txns.filter(t=>!(t.pid===s.projId&&t.type==='pay'&&t.amt===s.net&&t.date===s.paidDate));
+  }
+  D.salary=D.salary.filter(x=>x.id!==id);
+  if(!skipRender){ sv(); renderSalHist(); renderList(); }
+}
+function delSal(id,silent){
+  if(silent){ _doDelSal(id); return; }
+  const s=D.salary.find(x=>x.id===id);
+  const l=s?D.parties.find(x=>x.id===s.lid):null;
+  const label=s?(l?l.name:'?')+' — '+MN[s.mon]+' '+s.yr+' ('+fmt(s.net)+')':'Yeh salary record';
+  askConfirm(label+' delete ho jayega. Labor aur Bank ke linked entries bhi hatengi.', function(){
+    _doDelSal(id);
+  }, 'Salary Record Delete Karen?');
+}
+
+function switchReportTab(t){
+  const isTxn=t==='txn';
+  document.getElementById('rtab-txn').style.background=isTxn?'#eff6ff':'#fff';
+  document.getElementById('rtab-txn').style.color=isTxn?'#1e429f':'#6b7280';
+  document.getElementById('rtab-txn').style.borderBottomColor=isTxn?'#1a56db':'transparent';
+  document.getElementById('rtab-sal').style.background=isTxn?'#fff':'#eff6ff';
+  document.getElementById('rtab-sal').style.color=isTxn?'#6b7280':'#1e429f';
+  document.getElementById('rtab-sal').style.borderBottomColor=isTxn?'transparent':'#1a56db';
+  document.getElementById('rtab-body-txn').style.display=isTxn?'':'none';
+  document.getElementById('rtab-body-sal').style.display=isTxn?'none':'';
+  if(!isTxn){ fillSalRptDrop(); buildSalReport(); }
+}
+function fillSalRptDrop(){
+  const sel=document.getElementById('rs-lab');if(!sel)return;
+  const labs=D.parties.filter(p=>p.cat==='labor');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- Sab Labor --</option>'+labs.map(l=>`<option value="${l.id}">${l.name}</option>`).join('');
+  if(cur&&labs.find(x=>x.id===cur)) sel.value=cur;
+}
+function _getSalRptRows(){
+  const labId=document.getElementById('rs-lab').value;
+  const from=document.getElementById('rs-from').value;
+  const to=document.getElementById('rs-to').value;
+  let sals=D.salary;
+  if(labId) sals=sals.filter(s=>s.lid===labId);
+  if(from) sals=sals.filter(s=>s.paidDate>=from);
+  if(to) sals=sals.filter(s=>s.paidDate<=to);
+  sals=[...sals].sort((a,b)=>a.paidDate>b.paidDate?-1:1);
+  return {sals,from,to,labId};
+}
+function buildSalReport(){
+  const {sals}=_getSalRptRows();
+  const el=document.getElementById('rs-body');
+  if(!sals.length){el.innerHTML='<div class="empty"><span class="empty-ico">📋</span>Is filter mein koi salary nahi</div>';return;}
+  const totalGross=sals.reduce((s,x)=>s+x.gross,0);
+  const totalAdv=sals.reduce((s,x)=>s+(x.advDeduct||0),0);
+  const totalNet=sals.reduce((s,x)=>s+x.net,0);
+  el.innerHTML=`
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-val" style="color:#1a56db">${fmtN(totalGross)}</div><div class="stat-lbl">Total Gross</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#dc2626">${fmtN(totalAdv)}</div><div class="stat-lbl">Advance Kati</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#16a34a">${fmtN(totalNet)}</div><div class="stat-lbl">Total Net Paid</div></div>
+      <div class="stat-box"><div class="stat-val">${sals.length}</div><div class="stat-lbl">Salary Entries</div></div>
+    </div>
+  `+sals.map(s=>{
+    const l=D.parties.find(x=>x.id===s.lid);
+    const proj=D.parties.find(x=>x.id===s.projId);
+    return`<div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">${l?l.name:'?'}</div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:3px">${MN[s.mon]} ${s.yr} • ${s.days} din${proj?' • '+proj.name:''} • ${s.paidDate}</div>
+          <div style="font-size:11px;color:#9ca3af">Basic: ${fmt(s.basic||0)}${s.alwAmt>0?' | Alw: '+fmt(s.alwAmt):''}${s.otAmt>0?' | OT: '+fmt(s.otAmt):''}${s.advDeduct>0?' | Adv: −'+fmt(s.advDeduct):''}</div>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:#16a34a;font-family:monospace;flex-shrink:0">${fmt(s.net)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function salRptPdf(){
+  const {sals,from,to,labId}=_getSalRptRows();
+  if(!sals.length){alert('Is filter mein koi salary nahi');return;}
+  const biz=D.prof;
+  const labName=labId?(D.parties.find(x=>x.id===labId)||{}).name:'Sab Labor';
+  const totalNet=sals.reduce((s,x)=>s+x.net,0);
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:24px;max-width:760px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}th{background:#f3f4f6;padding:7px;border:1px solid #e5e7eb;text-align:left}td{padding:7px;border:1px solid #e5e7eb}.tot{font-weight:700;background:#f0fdf4}@media print{button{display:none}}</style></head><body>
+  <h2>${biz.biz||'ContractorKhata'} — Salary Report</h2>
+  <p style="color:#6b7280;font-size:13px">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
+  <p style="font-size:13px"><b>Labor:</b> ${labName} ${from?' | <b>From:</b> '+from:''} ${to?' | <b>To:</b> '+to:''}</p>
+  <table><thead><tr><th>Labor</th><th>Month</th><th>Days</th><th>Basic</th><th>Allowance</th><th>OT</th><th>Advance</th><th>Net</th><th>Paid Date</th></tr></thead><tbody>
+  ${sals.map(s=>{const l=D.parties.find(x=>x.id===s.lid);return`<tr><td>${l?l.name:'?'}</td><td>${MN[s.mon]} ${s.yr}</td><td>${s.days}</td><td>${fmtN(s.basic||0)}</td><td>${fmtN(s.alwAmt||0)}</td><td>${fmtN(s.otAmt||0)}</td><td>${fmtN(s.advDeduct||0)}</td><td>${fmtN(s.net)}</td><td>${s.paidDate}</td></tr>`;}).join('')}
+  <tr class="tot"><td colspan="7">TOTAL</td><td>${fmtN(totalNet)}</td><td></td></tr>
+  </tbody></table>
+  <button onclick="window.print()" style="margin-top:16px;padding:10px 24px;background:#1a56db;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨️ Print / PDF</button>
+  </body></html>`;
+  openHtmlReport(html, `Salary_Report_${td()}`);
+}
+function salRptExcel(){
+  const {sals}=_getSalRptRows();
+  if(!sals.length){alert('Is filter mein koi salary nahi');return;}
+  if(typeof XLSX==='undefined'){alert('Internet check karen');return;}
+  const wb=XLSX.utils.book_new();
+  const rows=sals.map(s=>{
+    const l=D.parties.find(x=>x.id===s.lid);
+    const proj=D.parties.find(x=>x.id===s.projId);
+    return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,Daily_Rate:s.rate,Basic:s.basic||0,Daily_Allowance_Rate:s.alwPD||0,Allowance_Total:s.alwAmt||0,OT_Rate:s.otr||0,OT_Hours:s.ot||0,OT_Amount:s.otAmt||0,Gross:s.gross,Advance_Deduction:s.advDeduct||0,Net:s.net,Paid_Date:s.paidDate,Project:proj?proj.name:''};
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Salary Report');
+  XLSX.writeFile(wb,`Salary_Report_${td()}.xlsx`);
+}
+function buildReport(){
+  const from=document.getElementById('r-from').value;
+  const to=document.getElementById('r-to').value;
+  let txns=D.txns;
+  if(from) txns=txns.filter(t=>t.date>=from);
+  if(to) txns=txns.filter(t=>t.date<=to);
+  let totalIn=0,totalOut=0;
+  txns.forEach(t=>{t.type==='recv'?totalIn+=t.amt:totalOut+=t.amt;});
+  const net=totalIn-totalOut;
+  const salPaid=D.salary.filter(s=>{if(from&&s.paidDate<from)return false;if(to&&s.paidDate>to)return false;return true;}).reduce((s,x)=>s+x.net,0);
+  const ps={};
+  txns.forEach(t=>{if(!ps[t.pid])ps[t.pid]={r:0,p:0};t.type==='recv'?ps[t.pid].r+=t.amt:ps[t.pid].p+=t.amt;});
+  document.getElementById('r-body').innerHTML=`
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-val" style="color:#16a34a">${fmtN(totalIn)}</div><div class="stat-lbl">Total Received</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#dc2626">${fmtN(totalOut)}</div><div class="stat-lbl">Total Paid</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:${net>=0?'#16a34a':'#dc2626'}">${net>=0?'+':'−'}${fmtN(Math.abs(net))}</div><div class="stat-lbl">Net P&L</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#92400e">${fmtN(salPaid)}</div><div class="stat-lbl">Salary Paid</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Party Summary</div>
+    ${Object.entries(ps).map(([pid,b])=>{const p=D.parties.find(x=>x.id===pid);const pn=b.r-b.p;const color=CC[p?.cat||'other'];return`<div style="background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.05)"><div><div style="font-size:13px;font-weight:600">${p?p.name:'?'} <span style="font-size:10px;padding:2px 7px;border-radius:20px;background:${CB[p?.cat||'other']};color:${color}">${CL[p?.cat||'other']}</span></div><div style="font-size:11px;color:#9ca3af">In: ${fmtN(b.r)} | Out: ${fmtN(b.p)}</div></div><div style="font-size:14px;font-weight:700;color:${pn>=0?'#16a34a':'#dc2626'}">${pn>=0?'+':'−'}${fmtN(Math.abs(pn))}</div></div>`;}).join('')||'<div class="empty">Koi data nahi</div>'}`;
+}
+
+function saveSettings(){
+  D.prof={...D.prof,biz:document.getElementById('set-biz').value.trim(),owner:document.getElementById('set-owner').value.trim(),phone:document.getElementById('set-phone').value.trim(),addr:document.getElementById('set-addr').value.trim(),city:document.getElementById('set-city').value.trim()};
+  const av=document.getElementById('set-av');if(av.dataset.photo)D.prof.photo=av.dataset.photo;
+  sv();loadSettings();
+  document.getElementById('set-ok').style.display='';
+  setTimeout(()=>document.getElementById('set-ok').style.display='none',2000);
+}
+function setPhotoLoad(){
+  const f=document.getElementById('set-ph').files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{D.prof.photo=e.target.result;sv();const av=document.getElementById('set-av');av.innerHTML='';const img=document.createElement('img');img.src=e.target.result;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';av.appendChild(img);av.dataset.photo=e.target.result;updateHomeAv();};r.readAsDataURL(f);
+}
+function loadSettings(){
+  const p=D.prof;
+  ['biz','owner','phone','addr','city'].forEach(k=>{const e=document.getElementById('set-'+k);if(e)e.value=p[k]||'';});
+  if(p.photo){const av=document.getElementById('set-av');av.innerHTML='';const img=document.createElement('img');img.src=p.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';av.appendChild(img);av.dataset.photo=p.photo;}
+  updateHomeAv();
+}
+function updateHomeAv(){
+  const p=D.prof;const name=p.biz||p.owner||'CK';
+  document.getElementById('h-biz').textContent=name;
+  const av=document.getElementById('h-av');
+  if(p.photo){av.innerHTML='';const img=document.createElement('img');img.src=p.photo;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';av.appendChild(img);}
+  else document.getElementById('h-init').textContent=ini(name);
+}
+function clearData(){
+  askConfirm('Pure app ka SAARA data — sab accounts, transactions, salary records — hamesha ke liye delete ho jayega. Yeh wapas NAHI ho sakta!', function(){
+    localStorage.removeItem(SK);
+    location.reload();
+  }, '⚠️ Sab Data Delete Karen?');
+}
+
+function xlExport(){
+  if(typeof XLSX==='undefined'){alert('Internet check karen');return;}
+  const fromEl=document.getElementById('r-from');
+  const toEl=document.getElementById('r-to');
+  const from=fromEl?fromEl.value:'';
+  const to=toEl?toEl.value:'';
+  const wb=XLSX.utils.book_new();
+
+  // Transactions — filtered by date range, sorted oldest first for running balance
+  let txns=D.txns;
+  if(from) txns=txns.filter(t=>t.date>=from);
+  if(to) txns=txns.filter(t=>t.date<=to);
+  const txnsSorted=[...txns].sort((a,b)=>a.date>b.date?1:(a.date<b.date?-1:0));
+  let runBal=0;
+  const tr=txnsSorted.map(t=>{
+    const p=D.parties.find(x=>x.id===t.pid);
+    const a=D.parties.find(x=>x.id===t.accId);
+    runBal+= t.type==='recv'?t.amt:-t.amt;
+    return{
+      Date:t.date,
+      Party:p?p.name:'?',
+      Detail:t.desc||'—',
+      Link_Account:a?a.name:'',
+      Received:t.type==='recv'?t.amt:'',
+      Paid:t.type==='pay'?t.amt:'',
+      Balance:runBal
+    };
+  });
+  if(tr.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tr),'Transactions');
+
+  // Party Summary — balance based on filtered txns within range
+  const sr=D.parties.map(p=>{
+    let r=0,pay=0;
+    if(p.cat==='bank'&&!from&&!to) r+=Number(p.obal||0); // only include opening balance for all-time view
+    txns.filter(t=>t.pid===p.id).forEach(t=>{t.type==='recv'?r+=t.amt:pay+=t.amt;});
+    txns.filter(t=>t.accId===p.id&&t.pid!==p.id).forEach(t=>{t.type==='recv'?r+=t.amt:pay+=t.amt;});
+    return{Name:p.name,Category:CL[p.cat],Phone:p.phone||'',In:r,Out:pay,Balance:r-pay};
+  });
+  if(sr.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sr),'Party_Summary');
+
+  // Salary — filtered by paidDate within range
+  let sals=D.salary;
+  if(from) sals=sals.filter(s=>s.paidDate>=from);
+  if(to) sals=sals.filter(s=>s.paidDate<=to);
+  const salr=sals.map(s=>{const l=D.parties.find(x=>x.id===s.lid);const pj=D.parties.find(x=>x.id===s.projId);return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,OT:s.ot,Basic:s.basic,Allowance:s.alwAmt,OT_Amount:s.otAmt,Gross:s.gross,Advance_Deduct:s.advDeduct,Net:s.net,Date:s.paidDate,Project:pj?pj.name:''};});
+  if(salr.length) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(salr),'Salary');
+
+  if(!wb.SheetNames.length){alert('Is date range mein koi data nahi mila');return;}
+  const suffix=(from||to)?`_${from||'start'}_to_${to||'today'}`:'';
+  XLSX.writeFile(wb,`ContractorKhata${suffix}.xlsx`);
+}
+function backupJSON(){
+  try{
+    const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`CK_Backup_${td()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    alert('💾 Backup file download ho gayi!\n\nIse safe jagah save karen (Google Drive, WhatsApp ko khud bhejen) taake data kabhi na khoye.');
+  }catch(err){
+    alert('Backup fail ho gaya: '+err.message);
+  }
+}
+function restoreJSON(ev){
+  const f=ev.target.files[0];
+  if(!f){return;}
+  if(!askConfirm){alert('Confirm system load nahi hua, reload karen');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      // Validate it looks like a ContractorKhata backup
+      if(typeof d!=='object'||d===null){
+        alert('Yeh file ContractorKhata ki backup nahi lagti.');
+        ev.target.value='';
+        return;
+      }
+      askConfirm('Yeh file restore karne se MAUJOODA sara data (sab accounts, transactions, salary) is backup se REPLACE ho jayega. Pehle se jo data hai woh delete ho jayega.', function(){
+        // Full replace (not shallow merge) — ensures stale arrays don't linger
+        D={
+          prof: d.prof || {biz:'',owner:'',phone:'',addr:'',city:'',photo:null},
+          parties: Array.isArray(d.parties) ? d.parties : [],
+          txns: Array.isArray(d.txns) ? d.txns : [],
+          salary: Array.isArray(d.salary) ? d.salary : [],
+          advances: Array.isArray(d.advances) ? d.advances : []
+        };
+        sv();
+        alert('✅ Backup restore ho gayi! App reload ho raha hai...');
+        location.reload();
+      }, '⚠️ Backup Restore Karen?');
+    }catch(err){
+      alert('File galat hai ya corrupt hai: '+err.message);
+      ev.target.value='';
+    }
+  };
+  r.onerror=()=>{ alert('File read nahi ho saki'); ev.target.value=''; };
+  r.readAsText(f);
+}
+
+// ─── PWA Service Worker ───
+if('serviceWorker' in navigator){
+  const swCode=`
+    const CACHE='ck-v1';
+    self.addEventListener('install',e=>{
+      e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/SAWA-ACCOUNT-BOOK/'])));
+      self.skipWaiting();
+    });
+    self.addEventListener('fetch',e=>{
+      e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
+    });
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl,{scope:'/'}).catch(()=>{});
+}
+
+// ─── PWA Install Prompt ───
+let _installPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  _installPrompt=e;
+  // Show install button if visible
+  const btn=document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display='';
+});
+window.addEventListener('appinstalled',()=>{
+  const btn=document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display='none';
+  _installPrompt=null;
+});
+function installPWA(){
+  if(_installPrompt){_installPrompt.prompt();_installPrompt.userChoice.then(()=>{_installPrompt=null;});}
+  else alert('Install ke liye Chrome menu (⋮) → "Add to Home Screen" dabayen');
+}
+
+ld();
+document.getElementById('h-dt').textContent=new Date().toLocaleDateString('en-PK',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+document.getElementById('e-date').value=td();
+document.getElementById('ap-join').value=td();
+const _now=new Date();
+document.getElementById('sl-mon').value=_now.getMonth();
+document.getElementById('sl-yr').value=_now.getFullYear();
+document.getElementById('r-from').value=`${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-01`;
+document.getElementById('r-to').value=td();
+document.getElementById('rs-from').value=`${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-01`;
+document.getElementById('rs-to').value=td();
+loadSettings();
+renderList();
+</script>
+</body>
+</html>
