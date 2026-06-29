@@ -1141,7 +1141,7 @@ function printSlipExcel(){
     Daily_Rate:_SC.rate, Basic_Pay:_SC.basic,
     Daily_Allowance_Rate:_SC.alwPD||0, Allowance_Total:_SC.alwAmt||0,
     OT_Rate:_SC.otr||0, OT_Hours:_SC.ot||0, OT_Amount:_SC.otAmt||0,
-    Gross_Salary:_SC.gross, Advance_Deduction:_SC.advDeduct||0,
+    Gross_Salary:_SC.gross, Pending_Advance_Deducted:_SC.advDeduct||0,
     Net_Salary:_SC.net, Project:_SC.projName||''
   }];
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Salary Slip');
@@ -1184,13 +1184,25 @@ function renderSalHist(){
             <div style="width:28px;height:28px;border-radius:50%;background:${l?'#eff6ff':'#f3f4f6'};color:#1e429f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;overflow:hidden">${l&&l.photo?`<img src="${l.photo}" style="width:100%;height:100%;object-fit:cover">`:(l?ini(l.name):'?')}</div>
             <div style="font-size:13px;font-weight:600">${l?l.name:'?'} <span style="font-size:10px;background:#f0fdf4;color:#166534;padding:2px 7px;border-radius:20px">Saved</span></div>
           </div>
-        <div style="font-size:11px;color:#9ca3af;margin-top:3px">${MN[s.mon]} ${s.yr} • ${s.days} din${proj?' • '+proj.name:''}</div>
-        <div style="font-size:11px;color:#9ca3af">Basic: ${fmt(s.basic||0)}${s.alwAmt>0?' | Alw: '+fmt(s.alwAmt):''}${s.otAmt>0?' | OT: '+fmt(s.otAmt):''}${s.advDeduct>0?' | Adv: −'+fmt(s.advDeduct):''}</div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:3px">${MN[s.mon]} ${s.yr} • ${s.days} din • Saved: ${s.paidDate}${proj?' • '+proj.name:''}</div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:2px">
+          Basic: ${fmt(s.basic||0)}
+          ${s.alwPD>0?' | Alw Rate: '+fmt(s.alwPD)+'/din':''}
+          ${s.alwAmt>0?' | Alw Total: '+fmt(s.alwAmt):''}
+          ${s.otr>0?' | OT Rate: '+fmt(s.otr)+'/hr':''}
+          ${s.ot>0?' | OT Hrs: '+s.ot:''}
+          ${s.otAmt>0?' | OT Amt: '+fmt(s.otAmt):''}
+        </div>
+        <div style="font-size:11px;color:#6b7280;margin-top:2px">
+          Daily Rate: ${fmt(s.rate||0)} | Gross: ${fmt(s.gross||0)}
+          ${s.advDeduct>0?' | Advance: −'+fmt(s.advDeduct):''}
+        </div>
       </div>
       <div style="text-align:right;flex-shrink:0">
         <div style="font-size:16px;font-weight:700;color:#16a34a;font-family:monospace">${fmt(s.net)}</div>
         <div style="display:flex;gap:4px;margin-top:6px">
           <button onclick="editSal('${s.id}')" style="padding:4px 9px;border:1px solid #1a56db;border-radius:6px;background:#eff6ff;color:#1e429f;font-size:11px;cursor:pointer">✏️ Edit</button>
+          <button onclick="waSal('${s.id}')" style="padding:4px 9px;border:1px solid #25d366;border-radius:6px;background:#f0fdf4;color:#166534;font-size:11px;cursor:pointer">💬 WA</button>
           <button onclick="delSal('${s.id}')" style="padding:4px 9px;border:1px solid #fca5a5;border-radius:6px;background:#fef2f2;color:#dc2626;font-size:11px;cursor:pointer">🗑️ Del</button>
         </div>
       </div>
@@ -1210,17 +1222,58 @@ function salHistPdf(){
   const yrName=yrEl&&yrEl.value!==''?yrEl.value:'';
   const projName=projEl&&projEl.value?(D.parties.find(x=>x.id===projEl.value)||{}).name:'';
   const totalNet=sals.reduce((s,x)=>s+x.net,0);
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:24px;max-width:760px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}th{background:#f3f4f6;padding:7px;border:1px solid #e5e7eb;text-align:left}td{padding:7px;border:1px solid #e5e7eb}.tot{font-weight:700;background:#f0fdf4}@media print{button{display:none}}</style></head><body>
-  <h2>${biz.biz||'ContractorKhata'} — Salary History</h2>
-  <p style="color:#6b7280;font-size:13px">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
-  <p style="font-size:13px"><b>Labor:</b> ${labName}${monName?' | <b>Mahina:</b> '+monName:''}${yrName?' | <b>Saal:</b> '+yrName:''}${projName?' | <b>Project:</b> '+projName:''}</p>
-  <table><thead><tr><th>Labor</th><th>Month</th><th>Days</th><th>Basic</th><th>Allowance</th><th>OT</th><th>Advance</th><th>Net</th><th>Paid Date</th></tr></thead><tbody>
-  ${sals.map(s=>{const l=D.parties.find(x=>x.id===s.lid);return`<tr><td>${l?l.name:'?'}</td><td>${MN[s.mon]} ${s.yr}</td><td>${s.days}</td><td>${fmtN(s.basic||0)}</td><td>${fmtN(s.alwAmt||0)}</td><td>${fmtN(s.otAmt||0)}</td><td>${fmtN(s.advDeduct||0)}</td><td>${fmtN(s.net)}</td><td>${s.paidDate}</td></tr>`;}).join('')}
-  <tr class="tot"><td colspan="7">TOTAL</td><td>${fmtN(totalNet)}</td><td></td></tr>
+  const totalGross=sals.reduce((s,x)=>s+x.gross,0);
+  const totalAdv=sals.reduce((s,x)=>s+(x.advDeduct||0),0);
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:16px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px;font-size:16px}table{width:100%;border-collapse:collapse;font-size:11px;margin-top:12px}th{background:#1a56db;color:#fff;padding:6px 5px;border:1px solid #1a56db;text-align:left;font-size:10px}td{padding:5px;border:1px solid #e5e7eb}.tot{font-weight:700;background:#f0fdf4}.num{text-align:right;font-family:monospace}@media print{button{display:none}body{padding:8px}}</style></head><body>
+  <h2>${biz.biz||'ContractorKhata'} — Salary Report</h2>
+  <p style="color:#6b7280;font-size:12px;margin:4px 0">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
+  <p style="font-size:12px;margin:4px 0"><b>Labor:</b> ${labName}${monName?' | <b>Mahina:</b> '+monName:''}${yrName?' | <b>Saal:</b> '+yrName:''}${projName?' | <b>Project:</b> '+projName:''}</p>
+  <table><thead><tr>
+    <th>Labor</th><th>Month</th><th>Year</th><th>Days</th>
+    <th>Daily Rate</th><th>Basic</th>
+    <th>Alw Rate/Day</th><th>Alw Total</th>
+    <th>OT Rate</th><th>OT Hrs</th><th>OT Amount</th>
+    <th>Gross</th><th>Advance</th><th>Net</th>
+    <th>Save Date</th><th>Project</th>
+  </tr></thead><tbody>
+  ${sals.map(s=>{
+    const l=D.parties.find(x=>x.id===s.lid);
+    const proj=D.parties.find(x=>x.id===s.projId);
+    return`<tr>
+      <td>${l?l.name:'?'}</td>
+      <td>${MN[s.mon]}</td>
+      <td>${s.yr}</td>
+      <td class="num">${s.days}</td>
+      <td class="num">${fmtN(s.rate||0)}</td>
+      <td class="num">${fmtN(s.basic||0)}</td>
+      <td class="num">${fmtN(s.alwPD||0)}</td>
+      <td class="num">${fmtN(s.alwAmt||0)}</td>
+      <td class="num">${fmtN(s.otr||0)}</td>
+      <td class="num">${s.ot||0}</td>
+      <td class="num">${fmtN(s.otAmt||0)}</td>
+      <td class="num">${fmtN(s.gross||0)}</td>
+      <td class="num">${fmtN(s.advDeduct||0)}</td>
+      <td class="num" style="font-weight:700;color:#16a34a">${fmtN(s.net)}</td>
+      <td>${s.paidDate}</td>
+      <td>${proj?proj.name:'—'}</td>
+    </tr>`;
+  }).join('')}
+  <tr class="tot">
+    <td colspan="5">TOTAL (${sals.length} records)</td>
+    <td class="num">${fmtN(sals.reduce((s,x)=>s+(x.basic||0),0))}</td>
+    <td colspan="1"></td>
+    <td class="num">${fmtN(sals.reduce((s,x)=>s+(x.alwAmt||0),0))}</td>
+    <td colspan="2"></td>
+    <td class="num">${fmtN(sals.reduce((s,x)=>s+(x.otAmt||0),0))}</td>
+    <td class="num">${fmtN(totalGross)}</td>
+    <td class="num">${fmtN(totalAdv)}</td>
+    <td class="num" style="color:#16a34a">${fmtN(totalNet)}</td>
+    <td colspan="2"></td>
+  </tr>
   </tbody></table>
   <button onclick="window.print()" style="margin-top:16px;padding:10px 24px;background:#1a56db;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨️ Print / PDF</button>
   </body></html>`;
-  openHtmlReport(html, `Salary_History_${td()}`);
+  openHtmlReport(html, `Salary_Report_${td()}`);
 }
 function salHistExcel(){
   const sals=_filteredSalHist();
@@ -1230,12 +1283,58 @@ function salHistExcel(){
   const rows=sals.map(s=>{
     const l=D.parties.find(x=>x.id===s.lid);
     const proj=D.parties.find(x=>x.id===s.projId);
-    return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,Daily_Rate:s.rate,Basic:s.basic||0,Daily_Allowance_Rate:s.alwPD||0,Allowance_Total:s.alwAmt||0,OT_Rate:s.otr||0,OT_Hours:s.ot||0,OT_Amount:s.otAmt||0,Gross:s.gross,Advance_Deduction:s.advDeduct||0,Net:s.net,Paid_Date:s.paidDate,Project:proj?proj.name:''};
+    return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,Daily_Rate:s.rate,Basic:s.basic||0,Daily_Allowance_Rate:s.alwPD||0,Allowance_Total:s.alwAmt||0,OT_Rate:s.otr||0,OT_Hours:s.ot||0,OT_Amount:s.otAmt||0,Gross:s.gross,Pending_Advance_Deducted:s.advDeduct||0,Net:s.net,Save_Date:s.paidDate,Project:proj?proj.name:''};
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Salary History');
   XLSX.writeFile(wb,`Salary_History_${td()}.xlsx`);
 }
 let _editingSalId=null; // tracks which salary record we're currently editing (null = creating new)
+function waSal(id){
+  const s=D.salary.find(x=>x.id===id); if(!s)return;
+  const l=D.parties.find(x=>x.id===s.lid);
+  const proj=D.parties.find(x=>x.id===s.projId);
+  const biz=D.prof;
+  if(!l||!l.phone){alert(l?l.name+' ka phone number nahi hai — pehle profile mein add karen':'Labor nahi mila');return;}
+  let msg=`*${biz.biz||'ContractorKhata'} — Salary Slip*
+`;
+  msg+=`----------------------------
+`;
+  msg+=`👷 *${l.name}*
+`;
+  msg+=`📅 ${MN[s.mon]} ${s.yr}
+`;
+  if(proj) msg+=`🏗️ Project: ${proj.name}
+`;
+  msg+=`----------------------------
+`;
+  msg+=`Haazri: ${s.days} din
+`;
+  msg+=`Daily Rate: Rs ${(s.rate||0).toLocaleString()}
+`;
+  msg+=`Basic Pay: *Rs ${(s.basic||0).toLocaleString()}*
+`;
+  if(s.alwAmt>0){
+    msg+=`Allowance: Rs ${(s.alwPD||0).toLocaleString()}/din × ${s.days} = Rs ${(s.alwAmt||0).toLocaleString()}
+`;
+  }
+  if(s.otAmt>0){
+    msg+=`Overtime: ${s.ot} hrs × Rs ${(s.otr||0).toLocaleString()} = Rs ${(s.otAmt||0).toLocaleString()}
+`;
+  }
+  msg+=`----------------------------
+`;
+  msg+=`Gross: Rs ${(s.gross||0).toLocaleString()}
+`;
+  if(s.advDeduct>0) msg+=`Advance Kati: − Rs ${(s.advDeduct||0).toLocaleString()}
+`;
+  msg+=`💰 *Net Salary: Rs ${(s.net||0).toLocaleString()}*
+`;
+  msg+=`----------------------------
+`;
+  if(biz.owner) msg+=`${biz.owner}`;
+  if(biz.phone) msg+=` | ${biz.phone}`;
+  window.open(`https://wa.me/${l.phone.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`,'_blank');
+}
 function editSal(id){
   const s=D.salary.find(x=>x.id===id);if(!s)return;
   _editingSalId=id; // remember — do NOT delete yet, only delete+replace on actual Save
@@ -1339,13 +1438,54 @@ function salRptPdf(){
   const biz=D.prof;
   const labName=labId?(D.parties.find(x=>x.id===labId)||{}).name:'Sab Labor';
   const totalNet=sals.reduce((s,x)=>s+x.net,0);
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:24px;max-width:760px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}th{background:#f3f4f6;padding:7px;border:1px solid #e5e7eb;text-align:left}td{padding:7px;border:1px solid #e5e7eb}.tot{font-weight:700;background:#f0fdf4}@media print{button{display:none}}</style></head><body>
+  const totalGross2=sals.reduce((s,x)=>s+x.gross,0);
+  const totalAdv2=sals.reduce((s,x)=>s+(x.advDeduct||0),0);
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:sans-serif;padding:16px;margin:0 auto}h2{color:#1a56db;border-bottom:2px solid #1a56db;padding-bottom:8px;font-size:16px}table{width:100%;border-collapse:collapse;font-size:11px;margin-top:12px}th{background:#1a56db;color:#fff;padding:6px 5px;border:1px solid #1a56db;text-align:left;font-size:10px}td{padding:5px;border:1px solid #e5e7eb}.tot{font-weight:700;background:#f0fdf4}.num{text-align:right;font-family:monospace}@media print{button{display:none}body{padding:8px}}</style></head><body>
   <h2>${biz.biz||'ContractorKhata'} — Salary Report</h2>
-  <p style="color:#6b7280;font-size:13px">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
-  <p style="font-size:13px"><b>Labor:</b> ${labName} ${from?' | <b>From:</b> '+from:''} ${to?' | <b>To:</b> '+to:''}</p>
-  <table><thead><tr><th>Labor</th><th>Month</th><th>Days</th><th>Basic</th><th>Allowance</th><th>OT</th><th>Advance</th><th>Net</th><th>Paid Date</th></tr></thead><tbody>
-  ${sals.map(s=>{const l=D.parties.find(x=>x.id===s.lid);return`<tr><td>${l?l.name:'?'}</td><td>${MN[s.mon]} ${s.yr}</td><td>${s.days}</td><td>${fmtN(s.basic||0)}</td><td>${fmtN(s.alwAmt||0)}</td><td>${fmtN(s.otAmt||0)}</td><td>${fmtN(s.advDeduct||0)}</td><td>${fmtN(s.net)}</td><td>${s.paidDate}</td></tr>`;}).join('')}
-  <tr class="tot"><td colspan="7">TOTAL</td><td>${fmtN(totalNet)}</td><td></td></tr>
+  <p style="color:#6b7280;font-size:12px;margin:4px 0">${biz.owner||''} ${biz.phone?'| '+biz.phone:''}</p>
+  <p style="font-size:12px;margin:4px 0"><b>Labor:</b> ${labName} ${from?' | <b>From:</b> '+from:''} ${to?' | <b>To:</b> '+to:''}</p>
+  <table><thead><tr>
+    <th>Labor</th><th>Month</th><th>Year</th><th>Days</th>
+    <th>Daily Rate</th><th>Basic</th>
+    <th>Alw Rate/Day</th><th>Alw Total</th>
+    <th>OT Rate</th><th>OT Hrs</th><th>OT Amount</th>
+    <th>Gross</th><th>Advance</th><th>Net</th>
+    <th>Save Date</th><th>Project</th>
+  </tr></thead><tbody>
+  ${sals.map(s=>{
+    const l=D.parties.find(x=>x.id===s.lid);
+    const proj=D.parties.find(x=>x.id===s.projId);
+    return`<tr>
+      <td>${l?l.name:'?'}</td>
+      <td>${MN[s.mon]}</td>
+      <td>${s.yr}</td>
+      <td class="num">${s.days}</td>
+      <td class="num">${fmtN(s.rate||0)}</td>
+      <td class="num">${fmtN(s.basic||0)}</td>
+      <td class="num">${fmtN(s.alwPD||0)}</td>
+      <td class="num">${fmtN(s.alwAmt||0)}</td>
+      <td class="num">${fmtN(s.otr||0)}</td>
+      <td class="num">${s.ot||0}</td>
+      <td class="num">${fmtN(s.otAmt||0)}</td>
+      <td class="num">${fmtN(s.gross||0)}</td>
+      <td class="num">${fmtN(s.advDeduct||0)}</td>
+      <td class="num" style="font-weight:700;color:#16a34a">${fmtN(s.net)}</td>
+      <td>${s.paidDate}</td>
+      <td>${proj?proj.name:'—'}</td>
+    </tr>`;
+  }).join('')}
+  <tr class="tot">
+    <td colspan="5">TOTAL (${sals.length} records)</td>
+    <td class="num">${fmtN(sals.reduce((s,x)=>s+(x.basic||0),0))}</td>
+    <td colspan="1"></td>
+    <td class="num">${fmtN(sals.reduce((s,x)=>s+(x.alwAmt||0),0))}</td>
+    <td colspan="2"></td>
+    <td class="num">${fmtN(sals.reduce((s,x)=>s+(x.otAmt||0),0))}</td>
+    <td class="num">${fmtN(totalGross2)}</td>
+    <td class="num">${fmtN(totalAdv2)}</td>
+    <td class="num" style="color:#16a34a">${fmtN(totalNet)}</td>
+    <td colspan="2"></td>
+  </tr>
   </tbody></table>
   <button onclick="window.print()" style="margin-top:16px;padding:10px 24px;background:#1a56db;color:#fff;border:none;border-radius:8px;cursor:pointer">🖨️ Print / PDF</button>
   </body></html>`;
@@ -1359,7 +1499,7 @@ function salRptExcel(){
   const rows=sals.map(s=>{
     const l=D.parties.find(x=>x.id===s.lid);
     const proj=D.parties.find(x=>x.id===s.projId);
-    return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,Daily_Rate:s.rate,Basic:s.basic||0,Daily_Allowance_Rate:s.alwPD||0,Allowance_Total:s.alwAmt||0,OT_Rate:s.otr||0,OT_Hours:s.ot||0,OT_Amount:s.otAmt||0,Gross:s.gross,Advance_Deduction:s.advDeduct||0,Net:s.net,Paid_Date:s.paidDate,Project:proj?proj.name:''};
+    return{Labor:l?l.name:'?',Month:MN[s.mon],Year:s.yr,Days:s.days,Daily_Rate:s.rate,Basic:s.basic||0,Daily_Allowance_Rate:s.alwPD||0,Allowance_Total:s.alwAmt||0,OT_Rate:s.otr||0,OT_Hours:s.ot||0,OT_Amount:s.otAmt||0,Gross:s.gross,Pending_Advance_Deducted:s.advDeduct||0,Net:s.net,Save_Date:s.paidDate,Project:proj?proj.name:''};
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Salary Report');
   XLSX.writeFile(wb,`Salary_Report_${td()}.xlsx`);
